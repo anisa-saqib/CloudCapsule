@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- ✦ name changed: cloud capsule ✦ -->
+  <title>₊˚✧ ʚ cloud capsule ɞ ✧˚₊</title>
+  <!-- Fonts & Icons (no emojis, only cute icons) -->
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@300;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- glassy + grunge style · now with extra texture inside cards! -->
+  <style>
+    /* reset + grunge glassware */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: #fddae0;  /* soft candy base */
+      background-image: 
+        radial-gradient(circle at 10% 20%, rgba(255, 215, 236, 0.5) 0%, transparent 25%),
+        radial-gradient(circle at 90% 40%, rgba(214, 188, 250, 0.5) 0%, transparent 30%),
+        radial-gradient(circle at 30% 80%, rgba(255, 224, 178, 0.5) 0%, transparent 35%),
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 8px);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    /* bubbly blobs + grunge noise (global) */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.08"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="1" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .glass-card {
+      background: rgba(255, 245, 250, 0.65);
+      backdrop-filter: blur(20px) saturate(180%);
+      -webkit-backdrop-filter: blur(20px) saturate(180%);
+      border-radius: 48px 48px 48px 24px;
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), 0 8px 0 rgba(161, 105, 129, 0.2);
+      padding: 2rem 2rem;
+      width: 100%;
+      max-width: 880px;
+      margin-bottom: 2rem;
+      position: relative;
+      transition: all 0.2s ease;
+      /* ------- ✦ EXTRA GRUNGE TEXTURE INSIDE CARD ------- */
+      background-image: 
+        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 2px, transparent 2px, transparent 8px),
+        radial-gradient(circle at 20% 40%, rgba(255,210,210,0.1) 0%, transparent 30%),
+        radial-gradient(circle at 90% 70%, rgba(210,210,255,0.1) 0%, transparent 40%);
+      background-blend-mode: overlay;
+    }
+
+    .glass-card:hover {
+      box-shadow: 0 25px 55px rgba(138, 74, 108, 0.2), 0 10px 0 #b6a0c9;
+    }
+
+    h1, h2 {
+      font-family: 'Baloo 2', cursive;
+      letter-spacing: 1px;
+      color: #412d3a;
+      font-weight: 700;
+    }
+
+    h1 { 
+      font-size: 3.2rem; 
+      text-shadow: 4px 4px 0 #ffe6f0, 6px 6px 0 rgba(149, 123, 177, 0.2);
+      margin-bottom: 0.2em;
+    }
+
+    .bubble-sub {
+      font-size: 1.2rem;
+      color: #5e4b66;
+      background: rgba(255, 235, 245, 0.7);
+      display: inline-block;
+      padding: 0.5rem 2rem;
+      border-radius: 60px;
+      backdrop-filter: blur(4px);
+      border: 2px dashed #d9b4c4;
+      margin-bottom: 1rem;
+    }
+
+    /* inputs – soft and pillowy */
+    input, textarea, .file-label {
+      background: rgba(255, 255, 255, 0.7);
+      border: 3px solid #e8ceda;
+      border-radius: 30px !important;
+      padding: 0.8rem 1.5rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      width: 100%;
+      margin-top: 0.5rem;
+      margin-bottom: 0.8rem;
+      backdrop-filter: blur(2px);
+      transition: 0.15s;
+      color: #2a1e2c;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #c99eb4;
+      background: rgba(255, 240, 245, 0.9);
+      outline: none;
+      box-shadow: 0 0 0 5px rgba(238, 186, 204, 0.2);
+    }
+
+    /* cute bubbly button – pure icon + glass */
+    .btn {
+      background: rgba(247, 210, 223, 0.9);
+      border: 3px solid white;
+      border-radius: 100px;
+      padding: 0.9rem 2rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #3f2e3b;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 0 #b9a0b0, 0 12px 25px rgba(0,0,0,0.1);
+      transition: all 0.06s linear;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin: 0.5rem 0.3rem;
+      border-style: solid;
+      border-color: #fff5fa #dfc1ce #dfc1ce #fff5fa;
+    }
+
+    .btn i {
+      font-size: 1.2rem;
+      color: #6f4b5e;
+    }
+
+    .btn:active {
+      transform: translateY(8px);
+      box-shadow: 0 2px 0 #b9a0b0, 0 12px 25px rgba(0,0,0,0.1);
+    }
+
+    /* capsule dashboard – grid of bubbly locks */
+    .capsule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.8rem;
+      margin-top: 2rem;
+    }
+
+    .mini-capsule {
+      background: rgba(255, 245, 250, 0.7);
+      backdrop-filter: blur(16px);
+      border-radius: 32px 32px 32px 8px;
+      padding: 1.8rem 1rem;
+      border: 2px solid #fff2f5;
+      box-shadow: 0 10px 0 #cba1b2, 0 15px 25px rgba(78, 52, 63, 0.2);
+      text-align: center;
+    }
+
+    .lock-icon-small {
+      font-size: 2.4rem;
+      color: #5d4a66;
+      filter: drop-shadow(3px 10px 3px rgba(127, 99, 110, 0.2));
+    }
+
+    .badge {
+      background: #e5c7d1;
+      border-radius: 50px;
+      padding: 0.3rem 1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #2f2533;
+      display: inline-block;
+      margin: 0.5rem 0;
+    }
+
+    /* hide / show */
+    .hidden {
+      display: none !important;
+    }
+
+    .sections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .memory-section {
+      background: rgba(255, 235, 240, 0.6);
+      backdrop-filter: blur(12px);
+      border-radius: 32px;
+      padding: 1.8rem 1.3rem;
+      border: 2px solid #ffeef2;
+    }
+
+    img {
+      max-width: 100%;
+      border-radius: 24px;
+      border: 5px solid white;
+      margin-top: 0.7rem;
+    }
+
+    hr {
+      border: 2px dashed #e2b6c2;
+      margin: 2rem 0;
+    }
+
+    .footer {
+      font-size: 0.9rem;
+      color: #6b5560;
+      background: rgba(255, 220, 235, 0.6);
+      padding: 0.7rem 2rem;
+      border-radius: 60px;
+    }
+
+    /* star rating (no emoji) */
+    .rating i {
+      font-size: 1.9rem;
+      color: #dbad5a;
+      margin: 0 2px;
+      cursor: pointer;
+      opacity: 0.4;
+      transition: 0.1s;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
+    }
+    .rating i.active {
+      opacity: 1;
+      color: #f5c15d;
+      text-shadow: 0 0 10px #f7d44a;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ========== SIGN IN / REGISTER CARD (GLASS) ========== -->
+<div id="signInCard" class="glass-card" style="max-width: 480px; text-align: center;">
+  <!-- ✦ name updated to cloud capsule ✦ -->
+  <h1>ʚ cloud capsule</h1>
+  <div class="bubble-sub"><i class="fas fa-capsules" style="margin-right: 8px;"></i> seal memories, open later</div>
+  <input type="email" id="emailInput" placeholder="email (cute address)">
+  <input type="password" id="passInput" placeholder="secret password">
+  <div style="display: flex; gap: 15px; justify-content: center;">
+    <button class="btn" onclick="handleSignIn()"><i class="fas fa-key"></i> log in</button>
+    <button class="btn" onclick="handleRegister()"><i class="fas fa-feather"></i> register</button>
+  </div>
+  <div style="margin-top: 20px;">
+    <button class="btn" onclick="toggleDark()"><i class="fas fa-moon"></i> dark mode</button>
+  </div>
+</div>
+
+<!-- ========== MAIN APP CARD – only when authenticated ========== -->
+<div id="mainCard" class="glass-card hidden" style="max-width: 1000px;">
+  <!-- sign out button -->
+  <button id="signOutBtn" class="btn" style="position: absolute; top: 20px; right: 20px; padding: 0.6rem 1.5rem;" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> sign out</button>
+  
+  <h1 style="font-size: 2.8rem;">🗝️ ˚₊· ͟͟͞͞➳</h1>
+  <p class="bubble-sub"><i class="fas fa-cloud"></i> your cloud capsule · sealed with time</p>
+
+  <!-- dashboard: list of capsules -->
+  <div id="dashboardView">
+    <div style="display: flex; justify-content: space-between; align-items: baseline;">
+      <h2><i class="fas fa-box-archive"></i> my capsules</h2>
+      <button class="btn" onclick="showNewCapsuleForm()"><i class="fas fa-plus-circle"></i> new capsule</button>
+    </div>
+    <!-- capsule grid will be injected by JS -->
+    <div id="capsuleList" class="capsule-grid"></div>
+  </div>
+
+  <!-- CREATE / EDIT CAPSULE VIEW (hidden by default) -->
+  <div id="capsuleEditorView" class="hidden">
+    <button class="btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> back</button>
+    <div style="margin-top: 1rem;">
+      <h2 id="editorTitle">✨ create new capsule</h2>
+      <input type="text" id="capsuleTitle" placeholder="capsule name (e.g. '2025 dreams')">
+      <label style="font-weight: bold; color: #4a3743;"><i class="fas fa-calendar-alt"></i> open date:</label>
+      <input type="datetime-local" id="capsuleOpenDate">
+      
+      <hr>
+      <div class="sections-grid">
+        <!-- photo -->
+        <div class="memory-section">
+          <h3><i class="fas fa-camera"></i> photo</h3>
+          <input type="file" accept="image/*" id="photoUpload">
+          <img id="photoPreview" src="" style="display: none;">
+        </div>
+        <!-- letter -->
+        <div class="memory-section">
+          <h3><i class="fas fa-envelope"></i> letter</h3>
+          <textarea id="letterText" placeholder="dear future me ..." rows="4"></textarea>
+        </div>
+        <!-- secrets (locked until open date) -->
+        <div class="memory-section">
+          <h3><i class="fas fa-mask"></i> secret</h3>
+          <textarea id="secretText" placeholder="only after opening..." rows="3"></textarea>
+        </div>
+        <!-- feelings / rating -->
+        <div class="memory-section">
+          <h3><i class="fas fa-heart"></i> feeling</h3>
+          <textarea id="feelingsText" placeholder="right now i feel..." rows="2"></textarea>
+          <div style="margin-top: 12px;">
+            <span style="font-weight: bold;">memory rating  </span>
+            <div class="rating" id="ratingStars">
+              <i class="fas fa-star" onclick="rateStar(0)"></i>
+              <i class="fas fa-star" onclick="rateStar(1)"></i>
+              <i class="fas fa-star" onclick="rateStar(2)"></i>
+              <i class="fas fa-star" onclick="rateStar(3)"></i>
+              <i class="fas fa-star" onclick="rateStar(4)"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- song (extra meaningful) -->
+      <div style="margin: 1rem 0; background: rgba(255,225,235,0.5); border-radius: 60px; padding: 1.5rem;">
+        <label><i class="fas fa-headphones-alt"></i> song that defines this moment</label>
+        <input type="text" id="songInput" placeholder="artist - track">
+      </div>
+
+      <div style="display: flex; gap: 20px; justify-content: center; margin: 2rem 0;">
+        <button class="btn" id="saveCapsuleBtn" onclick="saveCapsuleToServer()"><i class="fas fa-save"></i> save capsule</button>
+        <button class="btn" onclick="lockCapsuleNow()"><i class="fas fa-lock"></i> lock & seal</button>
+      </div>
+      <p style="color: #5a4a54;"><i class="fas fa-hourglass-half"></i> after locking, nobody can edit until open date</p>
+    </div>
+  </div>
+
+  <!-- OPENED CAPSULE CONTENT (when date reached) -->
+  <div id="openedCapsuleView" class="hidden">
+    <button class="btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> all capsules</button>
+    <div id="openedCapsuleContent" style="margin-top: 1.5rem;"></div>
+  </div>
+
+  <div class="footer" style="margin-top: 3rem;">
+    <i class="fas fa-capsules"></i> sealed with grunge & glitter · open when ready
+  </div>
+</div>
+
+<script>
+  // ------------------------------
+  // ☁️  FIXED: API_URL now points directly to your backend!
+  //      No more "Failed to fetch" – works when you open the file locally.
+  // ------------------------------
+  const API_URL = 'http://localhost:3000';   // ✅ change this if your backend runs elsewhere
+
+  let currentUser = null;
+  let authToken = null;
+  let currentCapsuleId = null;
+  let selectedRating = 0;
+
+  // ---------- helper ----------
+  async function fetchWithAuth(url, options = {}) {
+    options.headers = {
+      ...options.headers,
+      'Authorization': `Bearer ${localStorage.getItem('token')}`,
+      'Content-Type': 'application/json'
+    };
+    return fetch(API_URL + url, options);   // ✅ always prepend API_URL
+  }
+
+  // ---------- sign in / register – fixed error handling ----------
+  async function handleSignIn() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passInput').value;
+    if (!email || !password) return alert('💌 please enter both');
+    try {
+      const res = await fetch(API_URL + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'login failed');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      currentUser = data.user;
+      authToken = data.token;
+      document.getElementById('signInCard').classList.add('hidden');
+      document.getElementById('mainCard').classList.remove('hidden');
+      loadDashboard();
+    } catch (e) {
+      alert('🔐 error: ' + e.message + '\n\n👉 Is the backend running? (node server.js)');
+    }
+  }
+
+  async function handleRegister() {
+    const email = document.getElementById('emailInput').value;
+    const password = document.getElementById('passInput').value;
+    if (!email || !password) return alert('📮 email + password needed');
+    try {
+      const res = await fetch(API_URL + '/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      alert('✨ registered! now log in');
+    } catch(e) { alert(e.message); }
+  }
+
+  function signOut() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    location.reload();
+  }
+
+  // ---------- dashboard: load capsules ----------
+  async function loadDashboard() {
+    document.getElementById('dashboardView').classList.remove('hidden');
+    document.getElementById('capsuleEditorView').classList.add('hidden');
+    document.getElementById('openedCapsuleView').classList.add('hidden');
+    try {
+      const res = await fetchWithAuth('/api/capsules');
+      const capsules = await res.json();
+      const listDiv = document.getElementById('capsuleList');
+      listDiv.innerHTML = '';
+      if (capsules.length === 0) {
+        listDiv.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem;">🍂 no capsules yet, create one ✨</div>';
+        return;
+      }
+      capsules.forEach(cap => {
+        const isOpen = new Date() >= new Date(cap.open_date);
+        const icon = isOpen ? 'fa-lock-open' : 'fa-lock';
+        const statusText = isOpen ? 'open now' : `locked until ${new Date(cap.open_date).toLocaleDateString()}`;
+        const div = document.createElement('div');
+        div.className = 'mini-capsule';
+        div.innerHTML = `
+          <div class="lock-icon-small"><i class="fas ${icon}"></i></div>
+          <h3 style="margin:0.5rem 0;">${cap.title || 'untitled'}</h3>
+          <span class="badge">${statusText}</span>
+          <div style="margin-top:1rem;">
+            <button class="btn" style="padding:0.5rem 1.2rem;" onclick="viewCapsule('${cap.id}')"><i class="fas fa-eye"></i> ${isOpen ? 'open' : 'peek'}</button>
+            ${!isOpen ? `<button class="btn" style="padding:0.5rem 1.2rem;" onclick="editCapsule('${cap.id}')"><i class="fas fa-pen"></i> edit</button>` : ''}
+          </div>
+        `;
+        listDiv.appendChild(div);
+      });
+    } catch(e) { 
+      console.error(e); 
+      alert('⚠️ Could not load capsules – is the backend running at ' + API_URL + '?'); 
+    }
+  }
+
+  // ---------- new / edit capsule ----------
+  function showNewCapsuleForm() {
+    currentCapsuleId = null;
+    document.getElementById('editorTitle').innerHTML = '✨ create new capsule';
+    document.getElementById('capsuleTitle').value = '';
+    document.getElementById('capsuleOpenDate').value = '';
+    document.getElementById('letterText').value = '';
+    document.getElementById('secretText').value = '';
+    document.getElementById('feelingsText').value = '';
+    document.getElementById('songInput').value = '';
+    document.getElementById('photoPreview').style.display = 'none';
+    document.getElementById('photoPreview').src = '';
+    selectedRating = 0;
+    updateStars();
+    document.getElementById('dashboardView').classList.add('hidden');
+    document.getElementById('capsuleEditorView').classList.remove('hidden');
+  }
+
+  async function editCapsule(capsuleId) {
+    currentCapsuleId = capsuleId;
+    document.getElementById('editorTitle').innerHTML = '✎ edit capsule';
+    try {
+      const res = await fetchWithAuth('/api/capsules/' + capsuleId);
+      if (!res.ok) throw new Error('cannot edit locked?');
+      const data = await res.json();
+      const cap = data.capsule;
+      document.getElementById('capsuleTitle').value = cap.title || '';
+      document.getElementById('capsuleOpenDate').value = cap.open_date?.slice(0,16) || '';
+      document.getElementById('letterText').value = cap.letter || '';
+      document.getElementById('secretText').value = cap.secret || '';
+      document.getElementById('feelingsText').value = cap.feeling || '';
+      document.getElementById('songInput').value = cap.song || '';
+      selectedRating = cap.rating || 0;
+      updateStars();
+      if (cap.photo_url) {
+        document.getElementById('photoPreview').src = API_URL + cap.photo_url;  // ✅ full URL
+        document.getElementById('photoPreview').style.display = 'block';
+      }
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('capsuleEditorView').classList.remove('hidden');
+    } catch(e) { alert('cannot edit: ' + e.message); }
+  }
+
+  // photo preview (live)
+  document.addEventListener('DOMContentLoaded', () => {
+    const photoInput = document.getElementById('photoUpload');
+    if (photoInput) {
+      photoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            const preview = document.getElementById('photoPreview');
+            preview.src = ev.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+  });
+
+  // save capsule (create or update)
+  async function saveCapsuleToServer() {
+    const title = document.getElementById('capsuleTitle').value;
+    const openDate = document.getElementById('capsuleOpenDate').value;
+    if (!title || !openDate) return alert('📅 title and open date needed');
+    
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('open_date', openDate);
+    formData.append('letter', document.getElementById('letterText').value);
+    formData.append('secret', document.getElementById('secretText').value);
+    formData.append('feeling', document.getElementById('feelingsText').value);
+    formData.append('song', document.getElementById('songInput').value);
+    formData.append('rating', selectedRating);
+    
+    const photoFile = document.getElementById('photoUpload').files[0];
+    if (photoFile) formData.append('photo', photoFile);
+
+    const url = currentCapsuleId ? 
+      (API_URL + `/api/capsules/${currentCapsuleId}/contents`) : 
+      (API_URL + '/api/capsules');
+    const method = currentCapsuleId ? 'PUT' : 'POST';
+
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+        body: formData
+      });
+      if (!res.ok) throw new Error('save failed');
+      const result = await res.json();
+      alert('💾 saved with love');
+      backToDashboard();
+    } catch(e) { alert('error: ' + e.message); }
+  }
+
+  async function lockCapsuleNow() {
+    if (!currentCapsuleId) return alert('💧 save capsule first before locking');
+    if (!confirm('lock capsule? no more edits until open date')) return;
+    try {
+      const res = await fetchWithAuth('/api/capsules/' + currentCapsuleId + '/lock', { method: 'POST' });
+      if (!res.ok) throw new Error('lock failed');
+      alert('🔒 capsule sealed');
+      backToDashboard();
+    } catch(e) { alert(e.message); }
+  }
+
+  // view single capsule (only if open date passed, backend blocks)
+  async function viewCapsule(capsuleId) {
+    try {
+      const res = await fetchWithAuth('/api/capsules/' + capsuleId);
+      if (res.status === 403) {
+        return alert('⏳ this capsule is still locked. time will tell.');
+      }
+      const data = await res.json();
+      const cap = data.capsule;
+      // show opened view
+      document.getElementById('dashboardView').classList.add('hidden');
+      document.getElementById('openedCapsuleView').classList.remove('hidden');
+      const contentDiv = document.getElementById('openedCapsuleContent');
+      contentDiv.innerHTML = `
+        <div class="memory-section" style="grid-column:1/-1;">
+          <h2><i class="fas fa-capsules"></i> ${cap.title}</h2>
+          <p><i class="fas fa-calendar"></i> opened: ${new Date().toLocaleString()}</p>
+          ${cap.photo_url ? `<img src="${API_URL + cap.photo_url}" style="max-height:300px;">` : ''}
+          <p style="background:white; border-radius: 20px; padding:1rem;"><strong>✉️ letter</strong><br>${cap.letter || '—'}</p>
+          <p style="background:#fff0f5; border-radius: 20px; padding:1rem;"><strong>🤫 secret</strong><br>${cap.secret || '—'}</p>
+          <p><strong>💭 feeling</strong> ${cap.feeling || ''}</p>
+          <p><strong>🎵 song</strong> ${cap.song || 'silence'}</p>
+          <div class="rating">${'<i class="fas fa-star" style="opacity:1; color:#f7c15d;"></i>'.repeat(cap.rating || 0)}${'<i class="fas fa-star" style="opacity:0.3;"></i>'.repeat(5-(cap.rating||0))}</div>
+        </div>
+      `;
+    } catch(e) { alert(e.message); }
+  }
+
+  function backToDashboard() {
+    loadDashboard();
+  }
+
+  // rating
+  function rateStar(index) {
+    selectedRating = index + 1;
+    updateStars();
+  }
+  function updateStars() {
+    const stars = document.querySelectorAll('#ratingStars i');
+    stars.forEach((s, i) => {
+      if (i < selectedRating) s.classList.add('active'); else s.classList.remove('active');
+    });
+  }
+
+  // dark mode toggle
+  function toggleDark() {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('dark', document.body.classList.contains('dark-mode'));
+  }
+
+  // ---------- init on load ----------
+  window.onload = async () => {
+    // dark mode persistence
+    if (localStorage.getItem('dark') === 'true') document.body.classList.add('dark-mode');
+    
+    // photo preview listener (already attached above, safe to keep)
+    const photoInput = document.getElementById('photoUpload');
+    if (photoInput) {
+      photoInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(ev) {
+            const preview = document.getElementById('photoPreview');
+            preview.src = ev.target.result;
+            preview.style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    // auto-login if token exists
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
+        const res = await fetchWithAuth('/api/auth/me');
+        if (res.ok) {
+          const data = await res.json();
+          currentUser = data.user;
+          document.getElementById('signInCard').classList.add('hidden');
+          document.getElementById('mainCard').classList.remove('hidden');
+          loadDashboard();
+        } else {
+          localStorage.removeItem('token');
+        }
+      } catch(e) { /* not logged in */ }
+    }
+  };
+
+  // style dark mode
+  const styleDark = document.createElement('style');
+  styleDark.textContent = `
+    body.dark-mode { background: #24202e; background-image: radial-gradient(circle at 10% 20%, #4a3e5a, transparent); }
+    body.dark-mode .glass-card { background: rgba(40, 30, 48, 0.75); border-color: #6e5a70; color: #ffeef5; }
+    body.dark-mode h1, body.dark-mode h2 { color: #ffd9e6; }
+    body.dark-mode input, body.dark-mode textarea { background: #332c3a; color: white; border-color: #9f8ba9; }
+  `;
+  document.head.appendChild(styleDark);
+</script>
+
+<!--
+======================================================
+       ☁️  BACKEND (NODE.JS) – CLOUD CAPSULE 
+======================================================
+Copy this whole block into server.js, then:
+
+1. Run:   npm install express sqlite3 bcrypt jsonwebtoken multer cors
+2. Run:   mkdir uploads
+3. Run:   node server.js
+
+👉 Now open http://localhost:3000 (or just this HTML file if you set API_URL correctly)
+-->
+
+<!-- SERVER.JS (embedded as text for copy) -->
+<pre style="display:none;" id="serverCode">
+// server.js — cloud capsule backend (sqlite, auth, time‑lock)
+const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const multer = require('multer');
+const path = require('path');
+const cors = require('cors');
+const fs = require('fs');
+
+const app = express();
+const PORT = 3000;
+const JWT_SECRET = 'cloudy-grunge-capsule-secret';
+
+app.use(cors());
+app.use(express.json());
+app.use('/uploads', express.static('uploads'));
+
+// multer for photo uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
+});
+const upload = multer({ storage });
+
+// ensure uploads folder exists
+if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
+
+// db init
+const db = new sqlite3.Database('./capsule.db');
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    email TEXT UNIQUE,
+    password TEXT
+  )`);
+  db.run(`CREATE TABLE IF NOT EXISTS capsules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    title TEXT,
+    open_date DATETIME,
+    locked INTEGER DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+  )`);
+  db.run(`CREATE TABLE IF NOT EXISTS contents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    capsule_id INTEGER UNIQUE,
+    letter TEXT,
+    secret TEXT,
+    feeling TEXT,
+    song TEXT,
+    rating INTEGER,
+    photo_url TEXT,
+    FOREIGN KEY(capsule_id) REFERENCES capsules(id)
+  )`);
+});
+
+// auth middleware
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  if (!token) return res.sendStatus(401);
+  jwt.verify(token, JWT_SECRET, (err, user) => {
+    if (err) return res.sendStatus(403);
+    req.user = user;
+    next();
+  });
+}
+
+// ---------- auth routes ----------
+app.post('/api/auth/register', async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) return res.status(400).json({ error: 'email+pass' });
+  const hash = await bcrypt.hash(password, 10);
+  db.run('INSERT INTO users (email, password) VALUES (?, ?)', [email, hash], function(err) {
+    if (err) return res.status(400).json({ error: 'email exists' });
+    res.json({ success: true });
+  });
+});
+
+app.post('/api/auth/login', (req, res) => {
+  const { email, password } = req.body;
+  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+    if (!user) return res.status(400).json({ error: 'invalid' });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ error: 'invalid' });
+    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
+    res.json({ token, user: { id: user.id, email: user.email } });
+  });
+});
+
+app.get('/api/auth/me', authenticateToken, (req, res) => {
+  res.json({ user: req.user });
+});
+
+// ---------- capsules ----------
+app.get('/api/capsules', authenticateToken, (req, res) => {
+  db.all('SELECT * FROM capsules WHERE user_id = ? ORDER BY created_at DESC', [req.user.id], (err, caps) => {
+    res.json(caps);
+  });
+});
+
+// create capsule (POST)
+app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) => {
+  const { title, open_date, letter, secret, feeling, song, rating } = req.body;
+  const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
+  db.run('INSERT INTO capsules (user_id, title, open_date, locked) VALUES (?, ?, ?, 0)', 
+    [req.user.id, title, open_date], function(err) {
+      if (err) return res.status(500).json({ error: err.message });
+      const capsuleId = this.lastID;
+      db.run(`INSERT INTO contents (capsule_id, letter, secret, feeling, song, rating, photo_url) 
+              VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              [capsuleId, letter, secret, feeling, song, rating, photo_url], (err2) => {
+        if (err2) return res.status(500).json(err2);
+        res.json({ id: capsuleId });
+      });
+  });
+});
+
+// get single capsule (with time-lock)
+app.get('/api/capsules/:id', authenticateToken, (req, res) => {
+  db.get(`SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.song, ct.rating, ct.photo_url 
+          FROM capsules c LEFT JOIN contents ct ON c.id = ct.capsule_id 
+          WHERE c.id = ? AND c.user_id = ?`, [req.params.id, req.user.id], (err, capsule) => {
+    if (err) return res.status(404);
+    if (!capsule) return res.sendStatus(404);
+    const now = new Date();
+    const open = new Date(capsule.open_date);
+    if (now < open) {
+      // locked: return only metadata, no sensitive content
+      capsule.letter = null; capsule.secret = null; capsule.feeling = null; capsule.song = null; capsule.rating = null; capsule.photo_url = null;
+      return res.json({ capsule, locked: true });
+    }
+    res.json({ capsule, locked: false });
+  });
+});
+
+// update contents (only if not locked AND not passed open date)
+app.put('/api/capsules/:id/contents', authenticateToken, upload.single('photo'), (req, res) => {
+  const capsuleId = req.params.id;
+  db.get('SELECT * FROM capsules WHERE id = ? AND user_id = ?', [capsuleId, req.user.id], (err, cap) => {
+    if (!cap) return res.status(404);
+    if (cap.locked === 1) return res.status(403).json({ error: 'capsule is locked' });
+    const now = new Date(); const open = new Date(cap.open_date);
+    if (now >= open) return res.status(403).json({ error: 'capsule already opened, read only' });
+    
+    const { letter, secret, feeling, song, rating } = req.body;
+    let photo_url = req.file ? `/uploads/${req.file.filename}` : null;
+    
+    db.get('SELECT id FROM contents WHERE capsule_id = ?', [capsuleId], (err, row) => {
+      if (row) {
+        let query = 'UPDATE contents SET letter = ?, secret = ?, feeling = ?, song = ?, rating = ?';
+        const params = [letter, secret, feeling, song, rating];
+        if (photo_url) {
+          query += ', photo_url = ?';
+          params.push(photo_url);
+        }
+        query += ' WHERE capsule_id = ?';
+        params.push(capsuleId);
+        db.run(query, params, (err2) => res.json({ updated: true }));
+      } else {
+        // insert if not exists
+        db.run('INSERT INTO contents (capsule_id, letter, secret, feeling, song, rating, photo_url) VALUES (?,?,?,?,?,?,?)',
+          [capsuleId, letter, secret, feeling, song, rating, photo_url], (err2) => res.json({ created: true }));
+      }
+    });
+  });
+});
+
+// lock capsule
+app.post('/api/capsules/:id/lock', authenticateToken, (req, res) => {
+  db.run('UPDATE capsules SET locked = 1 WHERE id = ? AND user_id = ?', [req.params.id, req.user.id], function(err) {
+    if (err) return res.status(500);
+    res.json({ locked: true });
+  });
+});
+
+// ✨ serve frontend automatically if you put index.html in a "public" folder
+app.use(express.static('public'));
+
+app.listen(PORT, () => console.log(`☁️ cloud capsule running on http://localhost:${PORT}`));
+</pre>
+
+</body>
+</html>
