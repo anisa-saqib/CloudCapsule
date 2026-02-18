@@ -3,862 +3,2162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- ✦ name changed: cloud capsule ✦ -->
-  <title>₊˚✧ ʚ cloud capsule ɞ ✧˚₊</title>
-  <!-- Fonts & Icons (no emojis, only cute icons) -->
+  <title>☁️ cloud capsule · royal blue dreams</title>
+  <!-- Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- glassy + grunge style · now with extra texture inside cards! -->
   <style>
-    /* reset + grunge glassware */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
+    html, body {
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* === LIGHT MODE - SOFT DREAMY PINK === */
     body {
       font-family: 'Nunito', sans-serif;
-      background: #fddae0;  /* soft candy base */
-      background-image: 
-        radial-gradient(circle at 10% 20%, rgba(255, 215, 236, 0.5) 0%, transparent 25%),
-        radial-gradient(circle at 90% 40%, rgba(214, 188, 250, 0.5) 0%, transparent 30%),
-        radial-gradient(circle at 30% 80%, rgba(255, 224, 178, 0.5) 0%, transparent 35%),
-        repeating-linear-gradient(45deg, rgba(0,0,0,0.02) 0px, rgba(0,0,0,0.02) 2px, transparent 2px, transparent 8px);
-      min-height: 100vh;
-      padding: 2rem 1.5rem;
+      background: linear-gradient(145deg, #ffd9e8 0%, #ffe0f0 50%, #ffcce6 100%);
+      height: 100vh;
+      width: 100vw;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* === DARK MODE - ROYAL BLUE WITH GREEN HINT === */
+    body.dark-mode {
+      background: linear-gradient(145deg, #1E2E4F 0%, #253b5e 50%, #31487A 100%);
+    }
+
+    /* === CLOUDS BACKGROUND - JUST A FEW, NATURAL === */
+    .clouds-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .cloud {
+      position: absolute;
+      border-radius: 1000px;
+      backdrop-filter: blur(3px);
+      opacity: 0.6;
+      will-change: transform;
+    }
+
+    .cloud::before, .cloud::after {
+      content: '';
+      position: absolute;
+      border-radius: 50%;
+    }
+
+    .cloud::before {
+      width: 65%;
+      height: 85%;
+      top: -45%;
+      left: 10%;
+    }
+
+    .cloud::after {
+      width: 45%;
+      height: 60%;
+      top: -35%;
+      right: 8%;
+    }
+
+    /* LIGHT MODE CLOUDS - WHITE WITH PINK GLOW */
+    body:not(.dark-mode) .cloud {
+      background: rgba(255, 255, 255, 0.8);
+      box-shadow: 0 20px 40px rgba(255, 150, 200, 0.2);
+    }
+
+    body:not(.dark-mode) .cloud::before,
+    body:not(.dark-mode) .cloud::after {
+      background: rgba(255, 255, 255, 0.8);
+    }
+
+    /* DARK MODE CLOUDS - SUBTLE BLUE */
+    body.dark-mode .cloud {
+      background: rgba(180, 200, 255, 0.1);
+      box-shadow: 0 20px 40px rgba(0, 20, 40, 0.2);
+    }
+
+    body.dark-mode .cloud::before,
+    body.dark-mode .cloud::after {
+      background: rgba(180, 200, 255, 0.1);
+    }
+
+    /* SLOW, LAZY FLOATING */
+    @keyframes floatSlowly {
+      0% { transform: translateX(-10vw) translateY(0); }
+      50% { transform: translateX(40vw) translateY(-20px); }
+      100% { transform: translateX(90vw) translateY(10px); }
+    }
+
+    @keyframes floatEvenSlower {
+      0% { transform: translateX(-15vw) translateY(0); }
+      50% { transform: translateX(50vw) translateY(15px); }
+      100% { transform: translateX(110vw) translateY(-10px); }
+    }
+
+    /* JUST 6 CLOUDS - NICE AND SPACIOUS */
+    .cloud1 { 
+      width: 320px; 
+      height: 115px; 
+      top: 15%; 
+      left: -5%; 
+      animation: floatSlowly 95s linear infinite; 
+    }
+    
+    .cloud2 { 
+      width: 280px; 
+      height: 100px; 
+      top: 40%; 
+      left: 20%; 
+      animation: floatEvenSlower 120s linear infinite; 
+    }
+    
+    .cloud3 { 
+      width: 360px; 
+      height: 130px; 
+      top: 70%; 
+      left: 45%; 
+      animation: floatSlowly 140s linear infinite; 
+    }
+    
+    .cloud4 { 
+      width: 240px; 
+      height: 85px; 
+      top: 25%; 
+      left: 70%; 
+      animation: floatEvenSlower 110s linear infinite; 
+    }
+    
+    .cloud5 { 
+      width: 300px; 
+      height: 110px; 
+      top: 55%; 
+      left: -10%; 
+      animation: floatSlowly 130s linear infinite; 
+    }
+    
+    .cloud6 { 
+      width: 260px; 
+      height: 95px; 
+      top: 85%; 
+      left: 30%; 
+      animation: floatEvenSlower 150s linear infinite; 
+    }
+
+    /* === NOTIFICATION SYSTEM - BOTTOM LEFT === */
+    .notification-container {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .notification {
+      background: rgba(255, 235, 245, 0.95);
+      backdrop-filter: blur(10px);
+      border: 3px solid white;
+      border-radius: 30px;
+      padding: 1rem 1.5rem;
+      font-family: 'Baloo 2', cursive;
+      color: #3a1a32;
+      box-shadow: 0 5px 0 #b07a9a, 0 10px 20px rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 280px;
+      transform: translateX(-120%);
+      animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4.5s;
+      pointer-events: none;
+    }
+
+    body.dark-mode .notification {
+      background: #1E2E4F;
+      color: #e8f0ff;
+      border-color: #4a6080;
+      box-shadow: 0 5px 0 #0f1a2a, 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes slideIn {
+      to { transform: translateX(0); }
+    }
+
+    @keyframes fadeOut {
+      to { opacity: 0; transform: translateX(-20px); }
+    }
+
+    .notification i {
+      font-size: 2rem;
+      color: #b07a9a;
+    }
+
+    body.dark-mode .notification i {
+      color: #a0c0ff;
+    }
+
+    .notification-content {
+      flex: 1;
+    }
+
+    .notification-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 0.2rem;
+    }
+
+    .notification-message {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    /* === MAIN CONTENT - PERFECTLY CENTERED === */
+    .homepage {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      position: relative;
+      justify-content: center;
+      text-align: center;
+      padding: 0 1rem;
     }
 
-    /* bubbly blobs + grunge noise (global) */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.08"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="1" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
-      pointer-events: none;
-      z-index: 100;
-    }
-
-    .glass-card {
-      background: rgba(255, 245, 250, 0.65);
-      backdrop-filter: blur(20px) saturate(180%);
-      -webkit-backdrop-filter: blur(20px) saturate(180%);
-      border-radius: 48px 48px 48px 24px;
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1), 0 8px 0 rgba(161, 105, 129, 0.2);
-      padding: 2rem 2rem;
-      width: 100%;
-      max-width: 880px;
-      margin-bottom: 2rem;
-      position: relative;
-      transition: all 0.2s ease;
-      /* ------- ✦ EXTRA GRUNGE TEXTURE INSIDE CARD ------- */
-      background-image: 
-        repeating-linear-gradient(45deg, rgba(0,0,0,0.015) 0px, rgba(0,0,0,0.015) 2px, transparent 2px, transparent 8px),
-        radial-gradient(circle at 20% 40%, rgba(255,210,210,0.1) 0%, transparent 30%),
-        radial-gradient(circle at 90% 70%, rgba(210,210,255,0.1) 0%, transparent 40%);
-      background-blend-mode: overlay;
-    }
-
-    .glass-card:hover {
-      box-shadow: 0 25px 55px rgba(138, 74, 108, 0.2), 0 10px 0 #b6a0c9;
-    }
-
-    h1, h2 {
+    /* === TITLE - TWO LINES, PERFECT CENTERING === */
+    .hero-title {
       font-family: 'Baloo 2', cursive;
+      font-size: clamp(3.2rem, 11vw, 6rem);
+      font-weight: 800;
+      color: #3a1a32;
+      text-shadow: 
+        5px 5px 0 #ff9fc7,
+        9px 9px 0 rgba(160, 70, 120, 0.15);
+      line-height: 1;
+      margin-bottom: 0.3rem;
+      letter-spacing: 3px;
+      animation: bubble 4s ease-in-out infinite;
+      transform-origin: center;
+      display: block;
+      white-space: normal;
+      word-break: break-word;
+      max-width: 90%;
+    }
+
+    body.dark-mode .hero-title {
+      color: #e8f0ff;
+      text-shadow: 
+        4px 4px 0 #1E2E4F,
+        8px 8px 0 rgba(20, 40, 60, 0.5),
+        0 0 20px rgba(200, 220, 255, 0.2);
+    }
+
+    @keyframes bubble {
+      0%, 100% { transform: scale(1) translateY(0); }
+      50% { transform: scale(1.02) translateY(-5px); }
+    }
+
+    /* === PUNCHLINE - MUCH SMALLER NOW === */
+    .punchline {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+      color: #552a45;
+      text-shadow: 1px 1px 0 #ff9fc7;
+      margin: 0.4rem 0 1.8rem;
       letter-spacing: 1px;
-      color: #412d3a;
-      font-weight: 700;
-    }
-
-    h1 { 
-      font-size: 3.2rem; 
-      text-shadow: 4px 4px 0 #ffe6f0, 6px 6px 0 rgba(149, 123, 177, 0.2);
-      margin-bottom: 0.2em;
-    }
-
-    .bubble-sub {
-      font-size: 1.2rem;
-      color: #5e4b66;
-      background: rgba(255, 235, 245, 0.7);
-      display: inline-block;
-      padding: 0.5rem 2rem;
-      border-radius: 60px;
+      background: rgba(255, 215, 235, 0.25);
+      padding: 0.4rem 1.2rem;
+      border-radius: 40px;
       backdrop-filter: blur(4px);
-      border: 2px dashed #d9b4c4;
+      border: 1.5px dashed #ffa5cc;
+      display: inline-block;
+    }
+
+    body.dark-mode .punchline {
+      color: #d0e0ff;
+      text-shadow: 1px 1px 0 #1E2E4F;
+      background: rgba(30, 46, 79, 0.3);
+      border-color: #4a6080;
+    }
+
+    /* === BUTTON CONTAINER - PERFECT SPACING === */
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      align-items: center;
+      margin: 0.8rem 0;
+      width: 100%;
+      max-width: 280px;
+    }
+
+    /* GET STARTED - MAIN ATTRACTION */
+    .home-btn.get-started {
+      background: rgba(255, 235, 245, 0.98);
+      border: 4px solid white;
+      border-radius: 60px;
+      padding: 1.1rem 2rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 800;
+      font-size: clamp(1.2rem, 4vw, 1.6rem);
+      color: #3a1a32;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 0 #b07a9a, 0 15px 30px rgba(140, 70, 100, 0.25);
+      cursor: pointer;
+      transition: all 0.08s linear;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      justify-content: center;
+      border-style: solid;
+      border-color: #ffffff #d09ab8 #d09ab8 #ffffff;
+    }
+
+    .home-btn.get-started:hover {
+      background: rgba(245, 225, 235, 0.98);
+      border-color: #e0e0e0 #c090b0 #c090b0 #e0e0e0;
+      transform: scale(1.02);
+    }
+
+    body.dark-mode .home-btn.get-started {
+      background: linear-gradient(145deg, #31487A, #1E2E4F);
+      color: #e8f0ff;
+      border-color: #4a6080 #1a2a3a #1a2a3a #4a6080;
+      box-shadow: 0 8px 0 #0f1a2a, 0 15px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    body.dark-mode .home-btn.get-started:hover {
+      background: linear-gradient(145deg, #3a558a, #253b5e);
+      border-color: #5a7090 #1a2a3a #1a2a3a #5a7090;
+      box-shadow: 0 8px 0 #0a1522;
+    }
+
+    /* LOGIN - DELICATE AND SMALL */
+    .home-btn.login {
+      background: rgba(255, 235, 245, 0.85);
+      border: 3px solid white;
+      border-radius: 50px;
+      padding: 0.6rem 1.4rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 600;
+      font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+      color: #3a1a32;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 0 #b07a9a, 0 8px 15px rgba(140, 70, 100, 0.15);
+      cursor: pointer;
+      transition: all 0.08s linear;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      width: 70%;
+      justify-content: center;
+      border-style: solid;
+      border-color: #ffffff #d09ab8 #d09ab8 #ffffff;
+    }
+
+    .home-btn.login:hover {
+      background: rgba(245, 225, 235, 0.9);
+      border-color: #e0e0e0 #c090b0 #c090b0 #e0e0e0;
+      transform: scale(1.02);
+    }
+
+    body.dark-mode .home-btn.login {
+      background: linear-gradient(145deg, #2a3a5a, #1E2E4F);
+      color: #d0e0ff;
+      border-color: #3a5070 #1a2a3a #1a2a3a #3a5070;
+      box-shadow: 0 4px 0 #0f1a2a, 0 8px 15px rgba(0, 0, 0, 0.4);
+    }
+
+    body.dark-mode .home-btn.login:hover {
+      background: linear-gradient(145deg, #32486a, #253b5e);
+      border-color: #4a6080 #1a2a3a #1a2a3a #4a6080;
+      box-shadow: 0 4px 0 #0a1522;
+    }
+
+    .home-btn.get-started i {
+      font-size: clamp(1.3rem, 4vw, 1.6rem);
+      color: #b86a98;
+    }
+
+    .home-btn.login i {
+      font-size: clamp(0.8rem, 2.5vw, 1.1rem);
+      color: #b86a98;
+    }
+
+    body.dark-mode .home-btn.get-started i,
+    body.dark-mode .home-btn.login i {
+      color: #a0c0ff;
+    }
+
+    .home-btn.get-started:active {
+      transform: translateY(8px);
+      box-shadow: 0 3px 0 #b07a9a;
+    }
+
+    .home-btn.login:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b07a9a;
+    }
+
+    /* === WELCOME MESSAGE - SOFT AND LOW === */
+    .welcome-message {
+      font-size: clamp(0.7rem, 2vw, 0.9rem);
+      color: #552a45;
+      margin-top: 2.5rem;
+      padding: 0.4rem 1.2rem;
+      background: rgba(255, 215, 235, 0.2);
+      border-radius: 40px;
+      backdrop-filter: blur(4px);
+      border: 1px dotted #ffa5cc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    body.dark-mode .welcome-message {
+      color: #b0c8ff;
+      background: rgba(30, 46, 79, 0.3);
+      border-color: #4a6080;
+    }
+
+    .welcome-message i {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    /* === TOP BUTTONS - DYNAMIC POSITIONING === */
+    .top-buttons {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      z-index: 1000;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .about-btn, .dark-toggle {
+      background: rgba(255, 235, 245, 0.9);
+      border: 2px solid white;
+      border-radius: 40px;
+      padding: 0.5rem 1.2rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #3a1a32;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 0 #b07a9a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.1s ease;
+    }
+
+    .about-btn:hover, .dark-toggle:hover {
+      background: rgba(245, 225, 235, 0.95);
+      border-color: #e0e0e0;
+    }
+
+    body.dark-mode .about-btn,
+    body.dark-mode .dark-toggle {
+      background: #1E2E4F;
+      color: #d0e0ff;
+      border-color: #4a6080;
+      box-shadow: 0 4px 0 #0f1a2a;
+    }
+
+    body.dark-mode .about-btn:hover,
+    body.dark-mode .dark-toggle:hover {
+      background: #253b5e;
+      border-color: #5a7090;
+    }
+
+    .about-btn:active, .dark-toggle:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #b07a9a;
+    }
+
+    /* === SIGN OUT BUTTON - ALWAYS VISIBLE TOP RIGHT === */
+    .sign-out-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: #b07a9a;
+      border: 3px solid white;
+      border-radius: 40px;
+      padding: 0.6rem 1.2rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: white;
+      box-shadow: 0 4px 0 #7a4a6a;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.08s ease;
+    }
+
+    body.dark-mode .sign-out-btn {
+      background: #31487A;
+      border-color: #a0c0ff;
+      color: #ffffff;
+      box-shadow: 0 4px 0 #1a2a3a;
+    }
+
+    .sign-out-btn:hover {
+      transform: scale(1.02);
+    }
+
+    .sign-out-btn:active {
+      transform: translateY(4px);
+      box-shadow: 0 2px 0 #7a4a6a;
+    }
+
+    body.dark-mode .sign-out-btn:active {
+      box-shadow: 0 2px 0 #1a2a3a;
+    }
+
+    /* === CAPSULE GRID - SEALED BOXES WITH SQUARES === */
+    .capsule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .capsule-card {
+      background: rgba(255, 235, 245, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 1.5rem;
+      border: 3px solid white;
+      box-shadow: 0 8px 0 #b07a9a;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body.dark-mode .capsule-card {
+      background: rgba(30, 46, 79, 0.7);
+      border-color: #4a6080;
+      box-shadow: 0 8px 0 #0f1a2a;
+    }
+
+    /* SEALED BOX PATTERN - SQUARES GOING IN */
+    .capsule-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        repeating-linear-gradient(45deg, 
+          rgba(176, 122, 154, 0.15) 0px, 
+          rgba(176, 122, 154, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px),
+        repeating-linear-gradient(-45deg, 
+          rgba(176, 122, 154, 0.15) 0px, 
+          rgba(176, 122, 154, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body.dark-mode .capsule-card::before {
+      background-image: 
+        repeating-linear-gradient(45deg, 
+          rgba(160, 192, 255, 0.15) 0px, 
+          rgba(160, 192, 255, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px),
+        repeating-linear-gradient(-45deg, 
+          rgba(160, 192, 255, 0.15) 0px, 
+          rgba(160, 192, 255, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px);
+    }
+
+    /* EXTRA SQUARES FOR SEALED LOOK */
+    .capsule-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 2px dashed rgba(176, 122, 154, 0.3);
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body.dark-mode .capsule-card::after {
+      border-color: rgba(160, 192, 255, 0.3);
+    }
+
+    /* UNLOCKED CAPSULE - SQUARES FADE AWAY */
+    .capsule-card.unlocked::before {
+      opacity: 0.1;
+      transition: opacity 0.5s ease;
+    }
+
+    .capsule-card.unlocked::after {
+      opacity: 0.1;
+      transition: opacity 0.5s ease;
+    }
+
+    .capsule-card.locked {
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+
+    .capsule-card.locked:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 0 #b07a9a;
+    }
+
+    body.dark-mode .capsule-card.locked:hover {
+      box-shadow: 0 10px 0 #0f1a2a;
+    }
+
+    .capsule-card.unlocked {
+      cursor: pointer;
+    }
+
+    .capsule-card.unlocked:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 0 #b07a9a;
+    }
+
+    body.dark-mode .capsule-card.unlocked:hover {
+      box-shadow: 0 12px 0 #0f1a2a;
+    }
+
+    .capsule-icon {
+      font-size: 2.5rem;
+      color: #b07a9a;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    body.dark-mode .capsule-icon {
+      color: #a0c0ff;
+    }
+
+    .capsule-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .capsule-date {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .capsule-badge {
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      background: #b07a9a;
+      color: white;
+      position: relative;
+      z-index: 2;
+    }
+
+    body.dark-mode .capsule-badge {
+      background: #31487A;
+    }
+
+    /* === REST OF THE STYLES (MODAL, ETC) - UNCHANGED === */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s ease;
+      padding: 1rem;
+    }
+
+    .modal-overlay.show {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background: rgba(255, 245, 250, 0.98);
+      backdrop-filter: blur(20px);
+      border-radius: 50px;
+      border: 4px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 20px 40px rgba(140, 70, 100, 0.25), 0 8px 0 #b07a9a;
+      padding: 2rem 1.8rem;
+      width: 90%;
+      max-width: 380px;
+      position: relative;
+      transform: scale(0.98);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.show .modal-card {
+      transform: scale(1);
+    }
+
+    body.dark-mode .modal-card {
+      background: #1E2E4F;
+      border-color: #4a6080;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 0 #0f1a2a;
+    }
+
+    .modal-card h2 {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(1.6rem, 5vw, 2rem);
+      color: #3a1a32;
       margin-bottom: 1rem;
     }
 
-    /* inputs – soft and pillowy */
-    input, textarea, .file-label {
-      background: rgba(255, 255, 255, 0.7);
-      border: 3px solid #e8ceda;
-      border-radius: 30px !important;
-      padding: 0.8rem 1.5rem;
+    body.dark-mode .modal-card h2,
+    body.dark-mode .modal-card p,
+    body.dark-mode .switch-text {
+      color: #d0e0ff;
+    }
+
+    .password-container {
+      position: relative;
+      width: 100%;
+      margin: 0.6rem 0;
+    }
+
+    .password-container input {
+      width: 100%;
+      padding: 0.9rem 3rem 0.9rem 1.4rem !important;
+      margin: 0 !important;
+    }
+
+    .peek-icon {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #b07a9a;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+
+    .peek-icon:hover {
+      color: #8a5a7a;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    body.dark-mode .peek-icon {
+      color: #a0c0ff;
+    }
+
+    body.dark-mode .peek-icon:hover {
+      color: #c0e0ff;
+    }
+
+    .modal-card input {
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid #ffb5d0;
+      border-radius: 40px;
+      padding: 0.9rem 1.4rem;
       font-family: 'Nunito', sans-serif;
       font-size: 1rem;
       width: 100%;
-      margin-top: 0.5rem;
-      margin-bottom: 0.8rem;
-      backdrop-filter: blur(2px);
-      transition: 0.15s;
-      color: #2a1e2c;
+      margin: 0.6rem 0;
     }
 
-    input:focus, textarea:focus {
-      border-color: #c99eb4;
-      background: rgba(255, 240, 245, 0.9);
-      outline: none;
-      box-shadow: 0 0 0 5px rgba(238, 186, 204, 0.2);
+    body.dark-mode .modal-card input {
+      background: #253b5e;
+      border-color: #4a6080;
+      color: #e8f0ff;
     }
 
-    /* cute bubbly button – pure icon + glass */
-    .btn {
-      background: rgba(247, 210, 223, 0.9);
-      border: 3px solid white;
-      border-radius: 100px;
-      padding: 0.9rem 2rem;
+    body.dark-mode .modal-card input::placeholder {
+      color: #a0b8d0;
+    }
+
+    .modal-btn {
+      background: rgba(247, 200, 220, 0.98);
+      border: 4px solid white;
+      border-radius: 50px;
+      padding: 1rem 2rem;
       font-family: 'Baloo 2', cursive;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #3f2e3b;
-      backdrop-filter: blur(12px);
-      box-shadow: 0 8px 0 #b9a0b0, 0 12px 25px rgba(0,0,0,0.1);
-      transition: all 0.06s linear;
+      font-weight: 700;
+      font-size: 1.3rem;
+      color: #3a1a32;
+      box-shadow: 0 6px 0 #b07a9a;
       cursor: pointer;
-      display: inline-flex;
+      width: 100%;
+      margin: 1.2rem 0;
+      transition: all 0.08s ease;
+    }
+
+    .modal-btn:hover {
+      background: rgba(237, 190, 210, 0.98);
+      border-color: #e0e0e0;
+    }
+
+    body.dark-mode .modal-btn {
+      background: #31487A;
+      color: #e8f0ff;
+      border-color: #5a7090;
+      box-shadow: 0 6px 0 #0f1a2a;
+    }
+
+    body.dark-mode .modal-btn:hover {
+      background: #3a558a;
+    }
+
+    .close-modal {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+      color: #b07a9a;
+      width: 40px;
+      height: 40px;
+      display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .close-modal:hover {
+      background: rgba(255, 255, 255, 0.5);
+      transform: rotate(90deg);
+    }
+
+    body.dark-mode .close-modal {
+      color: #a0c0ff;
+    }
+
+    body.dark-mode .close-modal:hover {
+      background: rgba(30, 46, 79, 0.5);
+    }
+
+    .switch-text {
+      color: #5a3a4a;
+      cursor: pointer;
+      font-size: 0.9rem;
+      text-decoration: underline;
+      transition: all 0.2s ease;
+    }
+
+    .switch-text:hover {
+      color: #c07aa0;
+      transform: translateX(5px);
+    }
+
+    body.dark-mode .switch-text:hover {
+      color: #a0c0ff;
+    }
+
+    .about-story {
+      max-height: 50vh;
+      overflow-y: auto;
+      padding: 0.5rem 1rem 0.5rem 0;
+      margin: 1rem 0;
+      scrollbar-width: thin;
+      scrollbar-color: #c07aa0 #ffe5f0;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    body.dark-mode .about-story {
+      scrollbar-color: #4a6080 #1E2E4F;
+    }
+
+    .about-story::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .about-story::-webkit-scrollbar-track {
+      background: #ffe5f0;
+      border-radius: 10px;
+    }
+
+    .about-story::-webkit-scrollbar-thumb {
+      background: #c07aa0;
+      border-radius: 10px;
+    }
+
+    body.dark-mode .about-story::-webkit-scrollbar-track {
+      background: #1E2E4F;
+    }
+
+    body.dark-mode .about-story::-webkit-scrollbar-thumb {
+      background: #4a6080;
+    }
+
+    .story-chapter {
+      margin-bottom: 1.5rem;
+      padding: 1rem;
+      border-radius: 20px;
+      background: rgba(255, 215, 235, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .story-chapter:hover {
+      transform: scale(1.02);
+      background: rgba(255, 215, 235, 0.3);
+    }
+
+    body.dark-mode .story-chapter {
+      background: rgba(49, 72, 122, 0.2);
+    }
+
+    body.dark-mode .story-chapter:hover {
+      background: rgba(49, 72, 122, 0.3);
+    }
+
+    .chapter-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      color: #b86a98;
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
       gap: 8px;
-      margin: 0.5rem 0.3rem;
-      border-style: solid;
-      border-color: #fff5fa #dfc1ce #dfc1ce #fff5fa;
     }
 
-    .btn i {
-      font-size: 1.2rem;
-      color: #6f4b5e;
+    body.dark-mode .chapter-title {
+      color: #a0c0ff;
     }
 
-    .btn:active {
-      transform: translateY(8px);
-      box-shadow: 0 2px 0 #b9a0b0, 0 12px 25px rgba(0,0,0,0.1);
+    .chapter-title i {
+      font-size: 1.4rem;
     }
 
-    /* capsule dashboard – grid of bubbly locks */
-    .capsule-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 1.8rem;
-      margin-top: 2rem;
+    .story-text {
+      color: #3a1a32;
+      font-size: 0.95rem;
     }
 
-    .mini-capsule {
-      background: rgba(255, 245, 250, 0.7);
-      backdrop-filter: blur(16px);
-      border-radius: 32px 32px 32px 8px;
-      padding: 1.8rem 1rem;
-      border: 2px solid #fff2f5;
-      box-shadow: 0 10px 0 #cba1b2, 0 15px 25px rgba(78, 52, 63, 0.2);
-      text-align: center;
+    body.dark-mode .story-text {
+      color: #d0e0ff;
     }
 
-    .lock-icon-small {
-      font-size: 2.4rem;
-      color: #5d4a66;
-      filter: drop-shadow(3px 10px 3px rgba(127, 99, 110, 0.2));
+    .fun-fact {
+      background: rgba(255, 180, 210, 0.2);
+      border-left: 4px solid #c07aa0;
+      padding: 0.8rem;
+      margin: 1rem 0;
+      border-radius: 15px;
+      font-style: italic;
+      font-size: 0.9rem;
+      color: #3a1a32;
     }
 
-    .badge {
-      background: #e5c7d1;
+    body.dark-mode .fun-fact {
+      background: rgba(49, 72, 122, 0.2);
+      border-left-color: #4a6080;
+      color: #b0c8ff;
+    }
+
+    #mainApp {
+      position: relative;
+      z-index: 20;
+      height: 100vh;
+      width: 100vw;
+      overflow-y: auto;
+      padding: 5rem 1rem 2rem;
+      scrollbar-width: thin;
+      scrollbar-color: #c07aa0 #ffe5f0;
+    }
+
+    body.dark-mode #mainApp {
+      scrollbar-color: #4a6080 #1E2E4F;
+    }
+
+    #mainApp::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    #mainApp::-webkit-scrollbar-track {
+      background: #ffe5f0;
+      border-radius: 10px;
+    }
+
+    #mainApp::-webkit-scrollbar-thumb {
+      background: #c07aa0;
+      border-radius: 10px;
+    }
+
+    body.dark-mode #mainApp::-webkit-scrollbar-track {
+      background: #1E2E4F;
+    }
+
+    body.dark-mode #mainApp::-webkit-scrollbar-thumb {
+      background: #4a6080;
+    }
+
+    .dashboard-container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .glass-card {
+      background: rgba(255, 245, 250, 0.9);
+      backdrop-filter: blur(20px);
       border-radius: 50px;
-      padding: 0.3rem 1rem;
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #2f2533;
-      display: inline-block;
-      margin: 0.5rem 0;
+      border: 4px solid rgba(255, 255, 255, 0.7);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 0 #b07a9a;
+      padding: 2rem;
+      margin-bottom: 2rem;
     }
 
-    /* hide / show */
+    body.dark-mode .glass-card {
+      background: #1E2E4F;
+      border-color: #4a6080;
+      color: #e8f0ff;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 8px 0 #0f1a2a;
+    }
+
+    .welcome-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .welcome-header h1 {
+      font-family: 'Baloo 2', cursive;
+      font-size: clamp(1.8rem, 4vw, 2.2rem);
+    }
+
+    .create-capsule-btn {
+      background: #b07a9a;
+      border: 3px solid white;
+      border-radius: 40px;
+      padding: 0.8rem 1.5rem;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.08s ease;
+      box-shadow: 0 5px 0 #7a4a6a;
+    }
+
+    body.dark-mode .create-capsule-btn {
+      background: #31487A;
+      box-shadow: 0 5px 0 #1E2E4F;
+    }
+
+    .create-capsule-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 2px 0 #7a4a6a;
+    }
+
+    .empty-capsules {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: rgba(255, 235, 245, 0.3);
+      border-radius: 40px;
+      margin: 2rem 0;
+      border: 2px dashed #ffb5d0;
+    }
+
+    body.dark-mode .empty-capsules {
+      background: rgba(30, 46, 79, 0.3);
+      border-color: #4a6080;
+    }
+
+    .empty-capsules i {
+      font-size: 4rem;
+      color: #b07a9a;
+      margin-bottom: 1rem;
+      opacity: 0.7;
+    }
+
+    body.dark-mode .empty-capsules i {
+      color: #a0c0ff;
+    }
+
+    .empty-capsules p {
+      font-size: 1.5rem;
+      font-family: 'Baloo 2', cursive;
+      color: #b07a9a;
+      margin-bottom: 0.5rem;
+    }
+
+    body.dark-mode .empty-capsules p {
+      color: #a0c0ff;
+    }
+
+    .empty-capsules .sub-note {
+      font-size: 1rem;
+      opacity: 0.8;
+      color: #7a5a6a;
+    }
+
+    body.dark-mode .empty-capsules .sub-note {
+      color: #b0c8ff;
+    }
+
+    .capsule-detail {
+      background: rgba(255, 235, 245, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 2rem;
+      margin-top: 1rem;
+    }
+
+    body.dark-mode .capsule-detail {
+      background: rgba(30, 46, 79, 0.7);
+    }
+
+    .secret-content {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+    }
+
+    body.dark-mode .secret-content {
+      background: rgba(20, 30, 50, 0.5);
+    }
+
+    .capsule-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .form-section {
+      background: rgba(255, 235, 245, 0.5);
+      border-radius: 30px;
+      padding: 1.5rem;
+    }
+
+    body.dark-mode .form-section {
+      background: rgba(30, 46, 79, 0.5);
+    }
+
+    .form-section h3 {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-section input,
+    .form-section textarea,
+    .form-section select {
+      width: 100%;
+      padding: 0.8rem 1rem;
+      margin: 0.5rem 0;
+      border: 3px solid #ffb5d0;
+      border-radius: 30px;
+      font-family: 'Nunito', sans-serif;
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    body.dark-mode .form-section input,
+    body.dark-mode .form-section textarea,
+    body.dark-mode .form-section select {
+      background: #253b5e;
+      border-color: #4a6080;
+      color: #e8f0ff;
+    }
+
+    .form-section textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .file-upload {
+      border: 3px dashed #ffb5d0;
+      border-radius: 30px;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    body.dark-mode .file-upload {
+      border-color: #4a6080;
+    }
+
+    .rating-stars {
+      display: flex;
+      gap: 5px;
+      margin: 0.5rem 0;
+      font-size: 1.5rem;
+    }
+
+    .rating-stars i {
+      color: #ffb5d0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .rating-stars i:hover,
+    .rating-stars i.active {
+      color: #ff9fc7;
+      transform: scale(1.1);
+    }
+
+    body.dark-mode .rating-stars i {
+      color: #4a6080;
+    }
+
+    body.dark-mode .rating-stars i:hover,
+    body.dark-mode .rating-stars i.active {
+      color: #a0c0ff;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin: 2rem 0;
+    }
+
+    .save-btn, .lock-btn {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 40px;
+      font-family: 'Baloo 2', cursive;
+      font-weight: 700;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.08s ease;
+    }
+
+    .save-btn {
+      background: #b07a9a;
+      color: white;
+      box-shadow: 0 6px 0 #7a4a6a;
+    }
+
+    .lock-btn {
+      background: #4a6080;
+      color: white;
+      box-shadow: 0 6px 0 #1E2E4F;
+    }
+
+    .save-btn:active, .lock-btn:active {
+      transform: translateY(6px);
+      box-shadow: none;
+    }
+
     .hidden {
       display: none !important;
     }
 
-    .sections-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
+    .fas, .far, .fab {
+      font-family: "Font Awesome 6 Free" !important;
     }
 
-    .memory-section {
-      background: rgba(255, 235, 240, 0.6);
-      backdrop-filter: blur(12px);
-      border-radius: 32px;
-      padding: 1.8rem 1.3rem;
-      border: 2px solid #ffeef2;
+    @media (max-width: 600px) {
+      .hero-title {
+        font-size: clamp(2.8rem, 9vw, 4.5rem);
+      }
+      .punchline {
+        font-size: 0.8rem;
+      }
+      .button-container {
+        max-width: 240px;
+      }
+      .home-btn.login {
+        width: 75%;
+      }
+      .top-buttons {
+        top: 10px;
+        left: 10px;
+        gap: 5px;
+      }
+      .about-btn, .dark-toggle {
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+      }
+      .chapter-title {
+        font-size: 1.1rem;
+      }
+      .story-text {
+        font-size: 0.85rem;
+      }
+      .capsule-grid {
+        grid-template-columns: 1fr;
+      }
+      .capsule-form {
+        grid-template-columns: 1fr;
+      }
+      .form-actions {
+        flex-direction: column;
+      }
+      .sign-out-btn {
+        top: 10px;
+        right: 10px;
+        padding: 0.4rem 1rem;
+        font-size: 0.8rem;
+      }
     }
+/* NOTIFICATION CONTAINER */
+.notification-container {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: auto;
+}
 
-    img {
-      max-width: 100%;
-      border-radius: 24px;
-      border: 5px solid white;
-      margin-top: 0.7rem;
-    }
+.notification {
+  background: rgba(255, 235, 245, 0.95);
+  backdrop-filter: blur(10px);
+  border: 3px solid white;
+  border-radius: 30px;
+  padding: 1rem 1.5rem;
+  font-family: 'Baloo 2', cursive;
+  color: #3a1a32;
+  box-shadow: 0 5px 0 #b07a9a, 0 10px 20px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 280px;
+  max-width: 350px;
+  transform: translateX(-120%);
+  animation: slideIn 0.5s forwards;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+}
 
-    hr {
-      border: 2px dashed #e2b6c2;
-      margin: 2rem 0;
-    }
+.notification:hover {
+  transform: scale(1.02) translateX(5px);
+  box-shadow: 0 8px 0 #b07a9a, 0 15px 25px rgba(0, 0, 0, 0.15);
+}
 
-    .footer {
-      font-size: 0.9rem;
-      color: #6b5560;
-      background: rgba(255, 220, 235, 0.6);
-      padding: 0.7rem 2rem;
-      border-radius: 60px;
-    }
+body.dark-mode .notification {
+  background: #1E2E4F;
+  color: #e8f0ff;
+  border-color: #4a6080;
+  box-shadow: 0 5px 0 #0f1a2a, 0 10px 20px rgba(0, 0, 0, 0.3);
+}
 
-    /* star rating (no emoji) */
-    .rating i {
-      font-size: 1.9rem;
-      color: #dbad5a;
-      margin: 0 2px;
-      cursor: pointer;
-      opacity: 0.4;
-      transition: 0.1s;
-      text-shadow: 2px 2px 0 rgba(0,0,0,0.05);
-    }
-    .rating i.active {
-      opacity: 1;
-      color: #f5c15d;
-      text-shadow: 0 0 10px #f7d44a;
-    }
+body.dark-mode .notification:hover {
+  box-shadow: 0 8px 0 #0f1a2a, 0 15px 25px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes slideIn {
+  to { transform: translateX(0); }
+}
+
+.notification i {
+  font-size: 2rem;
+  color: #b07a9a;
+}
+
+body.dark-mode .notification i {
+  color: #a0c0ff;
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+}
+
+.notification-message {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
   </style>
 </head>
 <body>
 
-<!-- ========== SIGN IN / REGISTER CARD (GLASS) ========== -->
-<div id="signInCard" class="glass-card" style="max-width: 480px; text-align: center;">
-  <!-- ✦ name updated to cloud capsule ✦ -->
-  <h1>ʚ cloud capsule</h1>
-  <div class="bubble-sub"><i class="fas fa-capsules" style="margin-right: 8px;"></i> seal memories, open later</div>
-  <input type="email" id="emailInput" placeholder="email (cute address)">
-  <input type="password" id="passInput" placeholder="secret password">
-  <div style="display: flex; gap: 15px; justify-content: center;">
-    <button class="btn" onclick="handleSignIn()"><i class="fas fa-key"></i> log in</button>
-    <button class="btn" onclick="handleRegister()"><i class="fas fa-feather"></i> register</button>
+<!-- NOTIFICATION CONTAINER - BOTTOM LEFT -->
+<div id="notificationContainer" class="notification-container"></div>
+
+<!-- TOP BUTTONS CONTAINER - ABOUT and DARK TOGGLE TOGETHER -->
+<div class="top-buttons">
+  <button class="about-btn" onclick="showAboutModal()">
+    <i class="fas fa-cloud"></i> ABOUT
+  </button>
+  <button class="dark-toggle" id="darkToggleBtn" onclick="toggleDarkMode()">
+    <i class="fas fa-moon"></i> <span id="darkToggleText">DARK</span>
+  </button>
+</div>
+
+<!-- FLOATING CLOUDS - JUST 6, NICE AND SPACIOUS -->
+<div class="clouds-background">
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+  <div class="cloud cloud4"></div>
+  <div class="cloud cloud5"></div>
+  <div class="cloud cloud6"></div>
+</div>
+
+<!-- HOMEPAGE - PERFECTLY CENTERED -->
+<div id="homepage" class="homepage">
+  <h1 class="hero-title">CLOUD<br>CAPSULE</h1>
+  <div class="punchline">✦ seal your memories in the clouds ✦</div>
+  <div class="button-container">
+    <button class="home-btn get-started" onclick="openModal('register')">
+      <i class="fas fa-feather"></i> GET STARTED
+    </button>
+    <button class="home-btn login" onclick="openModal('login')">
+      <i class="fas fa-key"></i> LOGIN
+    </button>
   </div>
-  <div style="margin-top: 20px;">
-    <button class="btn" onclick="toggleDark()"><i class="fas fa-moon"></i> dark mode</button>
+  <div class="welcome-message">
+    <i class="fas fa-cloud"></i> welcome home, dreamer <i class="fas fa-cloud"></i>
   </div>
 </div>
 
-<!-- ========== MAIN APP CARD – only when authenticated ========== -->
-<div id="mainCard" class="glass-card hidden" style="max-width: 1000px;">
-  <!-- sign out button -->
-  <button id="signOutBtn" class="btn" style="position: absolute; top: 20px; right: 20px; padding: 0.6rem 1.5rem;" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> sign out</button>
-  
-  <h1 style="font-size: 2.8rem;">🗝️ ˚₊· ͟͟͞͞➳</h1>
-  <p class="bubble-sub"><i class="fas fa-cloud"></i> your cloud capsule · sealed with time</p>
-
-  <!-- dashboard: list of capsules -->
-  <div id="dashboardView">
-    <div style="display: flex; justify-content: space-between; align-items: baseline;">
-      <h2><i class="fas fa-box-archive"></i> my capsules</h2>
-      <button class="btn" onclick="showNewCapsuleForm()"><i class="fas fa-plus-circle"></i> new capsule</button>
+<!-- LOGIN/REGISTER MODAL - WITH PASSWORD PEEK -->
+<div id="modalOverlay" class="modal-overlay">
+  <div class="modal-card">
+    <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    
+    <div id="loginForm">
+      <h2>✧ welcome back ✧</h2>
+      <input type="email" id="loginEmail" placeholder="email">
+      <div class="password-container">
+        <input type="password" id="loginPassword" placeholder="password">
+        <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('loginPassword', this)"></i>
+      </div>
+      <button class="modal-btn" onclick="handleLogin()">LOG IN</button>
+      <div class="switch-text" onclick="switchToRegister()">new here? get started →</div>
     </div>
-    <!-- capsule grid will be injected by JS -->
-    <div id="capsuleList" class="capsule-grid"></div>
-  </div>
 
-  <!-- CREATE / EDIT CAPSULE VIEW (hidden by default) -->
-  <div id="capsuleEditorView" class="hidden">
-    <button class="btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> back</button>
-    <div style="margin-top: 1rem;">
-      <h2 id="editorTitle">✨ create new capsule</h2>
-      <input type="text" id="capsuleTitle" placeholder="capsule name (e.g. '2025 dreams')">
-      <label style="font-weight: bold; color: #4a3743;"><i class="fas fa-calendar-alt"></i> open date:</label>
-      <input type="datetime-local" id="capsuleOpenDate">
-      
-      <hr>
-      <div class="sections-grid">
-        <!-- photo -->
-        <div class="memory-section">
-          <h3><i class="fas fa-camera"></i> photo</h3>
-          <input type="file" accept="image/*" id="photoUpload">
-          <img id="photoPreview" src="" style="display: none;">
-        </div>
-        <!-- letter -->
-        <div class="memory-section">
-          <h3><i class="fas fa-envelope"></i> letter</h3>
-          <textarea id="letterText" placeholder="dear future me ..." rows="4"></textarea>
-        </div>
-        <!-- secrets (locked until open date) -->
-        <div class="memory-section">
-          <h3><i class="fas fa-mask"></i> secret</h3>
-          <textarea id="secretText" placeholder="only after opening..." rows="3"></textarea>
-        </div>
-        <!-- feelings / rating -->
-        <div class="memory-section">
-          <h3><i class="fas fa-heart"></i> feeling</h3>
-          <textarea id="feelingsText" placeholder="right now i feel..." rows="2"></textarea>
-          <div style="margin-top: 12px;">
-            <span style="font-weight: bold;">memory rating  </span>
-            <div class="rating" id="ratingStars">
-              <i class="fas fa-star" onclick="rateStar(0)"></i>
-              <i class="fas fa-star" onclick="rateStar(1)"></i>
-              <i class="fas fa-star" onclick="rateStar(2)"></i>
-              <i class="fas fa-star" onclick="rateStar(3)"></i>
-              <i class="fas fa-star" onclick="rateStar(4)"></i>
+    <div id="registerForm" class="hidden">
+      <h2>✧ hey there! ✧</h2>
+      <p style="font-size: 1rem; margin-bottom: 0.8rem;">ready to make some memories?</p>
+      <input type="text" id="regUsername" placeholder="username">
+      <input type="email" id="regEmail" placeholder="email">
+      <div class="password-container">
+        <input type="password" id="regPassword" placeholder="password">
+        <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('regPassword', this)"></i>
+      </div>
+      <div class="password-container">
+        <input type="password" id="regConfirm" placeholder="confirm password">
+        <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('regConfirm', this)"></i>
+      </div>
+      <button class="modal-btn" onclick="handleRegister()">GET STARTED</button>
+      <div class="switch-text" onclick="switchToLogin()">already have an account? log in →</div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT MODAL - FULL SCROLLABLE STORY -->
+<div id="aboutModal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 550px;">
+    <button class="close-modal" onclick="closeAboutModal()"><i class="fas fa-times"></i></button>
+    <h2 style="text-align: center;">✧ our story ✧</h2>
+    <div class="about-story">
+      <div class="story-chapter"><div class="chapter-title"><i class="fas fa-seedling"></i> chapter 1: a tiny idea</div><div class="story-text">once upon a time, on a rainy tuesday afternoon, two friends sat in a cozy café. one was writing in a journal, the other was doodling clouds. "wouldn't it be nice," said the doodler, "if we could store memories in the clouds? like, actual clouds?" and the other laughed. but the idea stuck ☁️</div></div>
+      <div class="story-chapter"><div class="chapter-title"><i class="fas fa-cloud-moon"></i> chapter 2: why capsules?</div><div class="story-text">we thought about time capsules — those little boxes you bury in the backyard and forget about. but who has a backyard anymore? and who wants to dig in the mud? so we thought: what if the capsule floated? what if it lived in the clouds, safe and pretty, until you're ready to open it? ✨</div><div class="fun-fact">🌈 fun fact: the first prototype was called "memory marshmallow" but it sounded too edible!</div></div>
+      <div class="story-chapter"><div class="chapter-title"><i class="fas fa-heart"></i> chapter 3: for the dreamers</div><div class="story-text">cloud capsule is for anyone who's ever wanted to: write a letter to their future self, save a secret too precious to share, capture a feeling before it fades, or simply leave a little time capsule for someone they love. it's for the hopeless romantics, the overthinkers, the memory-hoarders, and the cloud-gazers ☁️💕</div></div>
+      <div class="story-chapter"><div class="chapter-title"><i class="fas fa-clock"></i> chapter 4: how it works</div><div class="story-text">you create a capsule. you fill it with photos, letters, secrets, songs, feelings. you pick a date in the future — maybe your birthday, maybe a random tuesday. then you lock it, and it floats away into the cloud dimension. on that special day, it floats back down, and you get to meet your past self again. 🪄</div></div>
+      <div class="story-chapter"><div class="chapter-title"><i class="fas fa-star"></i> chapter 5: the dream continues</div><div class="story-text">today, cloud capsule is a little corner of the internet where thousands of people store their memories. we've seen marriage proposals, graduation messages, goodbye letters to loved ones, and so many happy tears. and we're just getting started. the clouds are infinite, and so are the memories ✨</div></div>
+      <div style="text-align: center; margin: 2rem 0 1rem; padding: 1rem; background: rgba(199, 161, 219, 0.2); border-radius: 50px;"><p style="font-size: 1.2rem; font-family: 'Baloo 2';">thank you for being part of our story</p><p style="font-size: 0.9rem;">now go make some memories 🫧</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP - AFTER LOGIN -->
+<div id="mainApp" class="hidden">
+  <button class="sign-out-btn" onclick="signOut()"><i class="fas fa-sign-out-alt"></i> SIGN OUT</button>
+  <div class="dashboard-container">
+    <div class="glass-card">
+      <div class="welcome-header">
+        <div><h1>🫧 welcome back, <span id="usernameDisplay">dreamer</span></h1><p>your memories are safe in the clouds</p></div>
+        <button class="create-capsule-btn" onclick="showCreateCapsule()"><i class="fas fa-plus-circle"></i> NEW CAPSULE</button>
+      </div>
+    </div>
+
+    <div id="capsuleGridView">
+      <div class="glass-card">
+        <h2 style="font-family: 'Baloo 2'; margin-bottom: 1.5rem;"><i class="fas fa-box-archive"></i> your capsules</h2>
+        <div id="capsuleGrid" class="capsule-grid"></div>
+      </div>
+    </div>
+
+    <div id="capsuleDetailView" class="hidden">
+      <div class="glass-card">
+        <button class="create-capsule-btn" style="margin-bottom: 1rem;" onclick="backToGrid()"><i class="fas fa-arrow-left"></i> BACK TO CAPSULES</button>
+        <div id="capsuleDetailContent"></div>
+      </div>
+    </div>
+
+    <div id="createCapsuleView" class="hidden">
+      <div class="glass-card">
+        <h2 style="font-family: 'Baloo 2'; margin-bottom: 1.5rem;"><i class="fas fa-feather"></i> create new capsule</h2>
+        <div class="capsule-form">
+          <div class="form-section">
+            <h3><i class="fas fa-info-circle"></i> basics</h3>
+            <input type="text" id="capsuleName" placeholder="capsule name">
+            <input type="datetime-local" id="capsuleOpenDate">
+            <h3 style="margin-top: 1.5rem;"><i class="fas fa-camera"></i> photo</h3>
+            <div class="file-upload" onclick="document.getElementById('photoUpload').click()">
+              <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
+              <p>click to upload a memory</p>
+              <input type="file" id="photoUpload" style="display: none;" accept="image/*">
+            </div>
+          </div>
+          <div class="form-section">
+            <h3><i class="fas fa-envelope"></i> letter</h3>
+            <textarea id="capsuleLetter" placeholder="dear future me..."></textarea>
+            <h3 style="margin-top: 1rem;"><i class="fas fa-mask"></i> secret</h3>
+            <textarea id="capsuleSecret" placeholder="something only you know..."></textarea>
+          </div>
+          <div class="form-section" style="grid-column: 1 / -1;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+              <div><h3><i class="fas fa-heart"></i> feeling</h3><select id="capsuleFeeling"><option value="happy">happy</option><option value="nostalgic">nostalgic</option><option value="hopeful">hopeful</option><option value="thoughtful">thoughtful</option><option value="excited">excited</option></select></div>
+              <div><h3><i class="fas fa-star"></i> rating</h3><div class="rating-stars" id="ratingStars"><i class="fas fa-star" onclick="setRating(1)"></i><i class="fas fa-star" onclick="setRating(2)"></i><i class="fas fa-star" onclick="setRating(3)"></i><i class="fas fa-star" onclick="setRating(4)"></i><i class="fas fa-star" onclick="setRating(5)"></i></div></div>
+              <div><h3><i class="fas fa-music"></i> song</h3><input type="text" id="capsuleSong" placeholder="artist - track"></div>
             </div>
           </div>
         </div>
+        <div class="form-actions">
+          <button class="save-btn" onclick="saveCapsule()"><i class="fas fa-save"></i> SAVE CAPSULE</button>
+          <button class="lock-btn" onclick="lockCapsule()"><i class="fas fa-lock"></i> LOCK & SEAL</button>
+        </div>
       </div>
-      <!-- song (extra meaningful) -->
-      <div style="margin: 1rem 0; background: rgba(255,225,235,0.5); border-radius: 60px; padding: 1.5rem;">
-        <label><i class="fas fa-headphones-alt"></i> song that defines this moment</label>
-        <input type="text" id="songInput" placeholder="artist - track">
-      </div>
-
-      <div style="display: flex; gap: 20px; justify-content: center; margin: 2rem 0;">
-        <button class="btn" id="saveCapsuleBtn" onclick="saveCapsuleToServer()"><i class="fas fa-save"></i> save capsule</button>
-        <button class="btn" onclick="lockCapsuleNow()"><i class="fas fa-lock"></i> lock & seal</button>
-      </div>
-      <p style="color: #5a4a54;"><i class="fas fa-hourglass-half"></i> after locking, nobody can edit until open date</p>
     </div>
-  </div>
-
-  <!-- OPENED CAPSULE CONTENT (when date reached) -->
-  <div id="openedCapsuleView" class="hidden">
-    <button class="btn" onclick="backToDashboard()"><i class="fas fa-arrow-left"></i> all capsules</button>
-    <div id="openedCapsuleContent" style="margin-top: 1.5rem;"></div>
-  </div>
-
-  <div class="footer" style="margin-top: 3rem;">
-    <i class="fas fa-capsules"></i> sealed with grunge & glitter · open when ready
   </div>
 </div>
 
 <script>
-  // ------------------------------
-  // ☁️  FIXED: API_URL now points directly to your backend!
-  //      No more "Failed to fetch" – works when you open the file locally.
-  // ------------------------------
-  const API_URL = 'http://localhost:3000';   // ✅ change this if your backend runs elsewhere
-
+  // ========== STATE MANAGEMENT ==========
   let currentUser = null;
-  let authToken = null;
-  let currentCapsuleId = null;
-  let selectedRating = 0;
+  let currentRating = 0;
+  let capsules = [];
+  let checkInterval = null;
 
-  // ---------- helper ----------
-  async function fetchWithAuth(url, options = {}) {
-    options.headers = {
-      ...options.headers,
-      'Authorization': `Bearer ${localStorage.getItem('token')}`,
-      'Content-Type': 'application/json'
-    };
-    return fetch(API_URL + url, options);   // ✅ always prepend API_URL
-  }
-
-  // ---------- sign in / register – fixed error handling ----------
-  async function handleSignIn() {
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passInput').value;
-    if (!email || !password) return alert('💌 please enter both');
-    try {
-      const res = await fetch(API_URL + '/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'login failed');
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      currentUser = data.user;
-      authToken = data.token;
-      document.getElementById('signInCard').classList.add('hidden');
-      document.getElementById('mainCard').classList.remove('hidden');
-      loadDashboard();
-    } catch (e) {
-      alert('🔐 error: ' + e.message + '\n\n👉 Is the backend running? (node server.js)');
+  // ========== DARK MODE TOGGLE WITH DYNAMIC TEXT ==========
+  function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const toggleBtn = document.querySelector('.dark-toggle i');
+    const toggleText = document.getElementById('darkToggleText');
+    
+    if (document.body.classList.contains('dark-mode')) {
+      toggleBtn.className = 'fas fa-sun';
+      toggleText.textContent = 'LIGHT';
+    } else {
+      toggleBtn.className = 'fas fa-moon';
+      toggleText.textContent = 'DARK';
     }
   }
 
-  async function handleRegister() {
-    const email = document.getElementById('emailInput').value;
-    const password = document.getElementById('passInput').value;
-    if (!email || !password) return alert('📮 email + password needed');
-    try {
-      const res = await fetch(API_URL + '/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      alert('✨ registered! now log in');
-    } catch(e) { alert(e.message); }
+  // ========== NOTIFICATION SYSTEM ==========
+  function showNotification(title, message, icon = '🎁') {
+    const container = document.getElementById('notificationContainer');
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.innerHTML = `
+      <i class="fas ${icon === '🎁' ? 'fa-gift' : icon === '🔒' ? 'fa-lock' : 'fa-clock'}"></i>
+      <div class="notification-content">
+        <div class="notification-title">${title}</div>
+        <div class="notification-message">${message}</div>
+      </div>
+    `;
+    container.appendChild(notification);
+    setTimeout(() => notification.remove(), 5000);
+  }
+
+  // ========== PASSWORD PEEK TOGGLE ==========
+  function togglePasswordVisibility(inputId, icon) {
+    const input = document.getElementById(inputId);
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('fa-eye');
+      icon.classList.add('fa-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('fa-eye-slash');
+      icon.classList.add('fa-eye');
+    }
+  }
+
+  // ========== MODAL CONTROL ==========
+  const modal = document.getElementById('modalOverlay');
+  const aboutModal = document.getElementById('aboutModal');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const homepage = document.getElementById('homepage');
+  const mainApp = document.getElementById('mainApp');
+
+  function openModal(type) {
+    modal.classList.add('show');
+    loginForm.classList.toggle('hidden', type !== 'login');
+    registerForm.classList.toggle('hidden', type === 'login');
+  }
+
+  function closeModal() { modal.classList.remove('show'); }
+  function showAboutModal() { aboutModal.classList.add('show'); }
+  function closeAboutModal() { aboutModal.classList.remove('show'); }
+  function switchToRegister() { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
+  function switchToLogin() { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
+
+  // ========== AUTH FUNCTIONS ==========
+  function handleLogin() {
+    const email = document.getElementById('loginEmail').value;
+    const pass = document.getElementById('loginPassword').value;
+    const username = email.split('@')[0];
+    
+    if (email && pass) {
+      currentUser = { email, username };
+      document.getElementById('usernameDisplay').textContent = username;
+      closeModal();
+      homepage.classList.add('hidden');
+      mainApp.classList.remove('hidden');
+      capsules = [];
+      renderCapsuleGrid();
+      startTimerCheck();
+    } else {
+      alert('please enter email and password ✧');
+    }
+  }
+
+  function handleRegister() {
+    const username = document.getElementById('regUsername').value;
+    const email = document.getElementById('regEmail').value;
+    const pass = document.getElementById('regPassword').value;
+    const confirm = document.getElementById('regConfirm').value;
+    
+    if (!username || !email || !pass || !confirm) {
+      alert('please fill all fields ✧');
+      return;
+    }
+    if (pass !== confirm) {
+      alert('passwords don\'t match ✧');
+      return;
+    }
+    
+    currentUser = { email, username };
+    document.getElementById('usernameDisplay').textContent = username;
+    closeModal();
+    homepage.classList.add('hidden');
+    mainApp.classList.remove('hidden');
+    capsules = [];
+    renderCapsuleGrid();
+    startTimerCheck();
+    alert('✨ welcome to cloud capsule!');
   }
 
   function signOut() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    location.reload();
-  }
-
-  // ---------- dashboard: load capsules ----------
-  async function loadDashboard() {
-    document.getElementById('dashboardView').classList.remove('hidden');
-    document.getElementById('capsuleEditorView').classList.add('hidden');
-    document.getElementById('openedCapsuleView').classList.add('hidden');
-    try {
-      const res = await fetchWithAuth('/api/capsules');
-      const capsules = await res.json();
-      const listDiv = document.getElementById('capsuleList');
-      listDiv.innerHTML = '';
-      if (capsules.length === 0) {
-        listDiv.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:2rem;">🍂 no capsules yet, create one ✨</div>';
-        return;
-      }
-      capsules.forEach(cap => {
-        const isOpen = new Date() >= new Date(cap.open_date);
-        const icon = isOpen ? 'fa-lock-open' : 'fa-lock';
-        const statusText = isOpen ? 'open now' : `locked until ${new Date(cap.open_date).toLocaleDateString()}`;
-        const div = document.createElement('div');
-        div.className = 'mini-capsule';
-        div.innerHTML = `
-          <div class="lock-icon-small"><i class="fas ${icon}"></i></div>
-          <h3 style="margin:0.5rem 0;">${cap.title || 'untitled'}</h3>
-          <span class="badge">${statusText}</span>
-          <div style="margin-top:1rem;">
-            <button class="btn" style="padding:0.5rem 1.2rem;" onclick="viewCapsule('${cap.id}')"><i class="fas fa-eye"></i> ${isOpen ? 'open' : 'peek'}</button>
-            ${!isOpen ? `<button class="btn" style="padding:0.5rem 1.2rem;" onclick="editCapsule('${cap.id}')"><i class="fas fa-pen"></i> edit</button>` : ''}
-          </div>
-        `;
-        listDiv.appendChild(div);
-      });
-    } catch(e) { 
-      console.error(e); 
-      alert('⚠️ Could not load capsules – is the backend running at ' + API_URL + '?'); 
+    currentUser = null;
+    mainApp.classList.add('hidden');
+    homepage.classList.remove('hidden');
+    if (checkInterval) {
+      clearInterval(checkInterval);
+      checkInterval = null;
     }
   }
 
-  // ---------- new / edit capsule ----------
-  function showNewCapsuleForm() {
-    currentCapsuleId = null;
-    document.getElementById('editorTitle').innerHTML = '✨ create new capsule';
-    document.getElementById('capsuleTitle').value = '';
-    document.getElementById('capsuleOpenDate').value = '';
-    document.getElementById('letterText').value = '';
-    document.getElementById('secretText').value = '';
-    document.getElementById('feelingsText').value = '';
-    document.getElementById('songInput').value = '';
-    document.getElementById('photoPreview').style.display = 'none';
-    document.getElementById('photoPreview').src = '';
-    selectedRating = 0;
-    updateStars();
-    document.getElementById('dashboardView').classList.add('hidden');
-    document.getElementById('capsuleEditorView').classList.remove('hidden');
-  }
-
-  async function editCapsule(capsuleId) {
-    currentCapsuleId = capsuleId;
-    document.getElementById('editorTitle').innerHTML = '✎ edit capsule';
-    try {
-      const res = await fetchWithAuth('/api/capsules/' + capsuleId);
-      if (!res.ok) throw new Error('cannot edit locked?');
-      const data = await res.json();
-      const cap = data.capsule;
-      document.getElementById('capsuleTitle').value = cap.title || '';
-      document.getElementById('capsuleOpenDate').value = cap.open_date?.slice(0,16) || '';
-      document.getElementById('letterText').value = cap.letter || '';
-      document.getElementById('secretText').value = cap.secret || '';
-      document.getElementById('feelingsText').value = cap.feeling || '';
-      document.getElementById('songInput').value = cap.song || '';
-      selectedRating = cap.rating || 0;
-      updateStars();
-      if (cap.photo_url) {
-        document.getElementById('photoPreview').src = API_URL + cap.photo_url;  // ✅ full URL
-        document.getElementById('photoPreview').style.display = 'block';
+  // ========== TIMER CHECK FUNCTION ==========
+  function checkCapsuleTimers() {
+    const now = new Date();
+    let changed = false;
+    
+    capsules.forEach(capsule => {
+      const openDate = new Date(capsule.openDate);
+      const isOpen = now >= openDate;
+      
+      if (isOpen && !capsule.isOpen) {
+        capsule.isOpen = true;
+        changed = true;
+        showNotification(
+          '✨ Capsule Opened!', 
+          `"${capsule.title}" is ready to view`,
+          '🎁'
+        );
       }
-      document.getElementById('dashboardView').classList.add('hidden');
-      document.getElementById('capsuleEditorView').classList.remove('hidden');
-    } catch(e) { alert('cannot edit: ' + e.message); }
+    });
+    
+    if (changed) {
+      renderCapsuleGrid();
+    }
   }
 
-  // photo preview (live)
+  function startTimerCheck() {
+    if (checkInterval) clearInterval(checkInterval);
+    checkInterval = setInterval(checkCapsuleTimers, 1000);
+  }
+
+  // ========== CAPSULE FUNCTIONS ==========
+  function renderCapsuleGrid() {
+    const grid = document.getElementById('capsuleGrid');
+    grid.innerHTML = '';
+    
+    if (capsules.length === 0) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'empty-capsules';
+      emptyDiv.style.gridColumn = '1 / -1';
+      emptyDiv.innerHTML = `
+        <i class="fas fa-cloud"></i>
+        <p>☁️ no capsules yet ☁️</p>
+        <div class="sub-note">click the "NEW CAPSULE" button to seal your first memory</div>
+        <div style="margin-top: 1.5rem; font-size: 0.9rem;">✨ every memory deserves to float ✨</div>
+      `;
+      grid.appendChild(emptyDiv);
+      return;
+    }
+    
+    capsules.forEach(capsule => {
+      const now = new Date();
+      const openDate = new Date(capsule.openDate);
+      const isOpen = now >= openDate;
+      
+      const card = document.createElement('div');
+      card.className = `capsule-card ${isOpen ? 'unlocked' : 'locked'}`;
+      card.setAttribute('data-id', capsule.id);
+      
+      if (isOpen) {
+        card.onclick = () => viewCapsule(capsule.id);
+      }
+      
+      card.innerHTML = `
+        <div class="capsule-icon"><i class="fas ${isOpen ? 'fa-lock-open' : 'fa-lock'}"></i></div>
+        <div class="capsule-title">${capsule.title}</div>
+        <div class="capsule-date">opens ${openDate.toLocaleDateString()}</div>
+        <span class="capsule-badge">${isOpen ? 'open now' : 'locked'}</span>
+      `;
+      
+      grid.appendChild(card);
+    });
+  }
+
+  function viewCapsule(id) {
+    const capsule = capsules.find(c => c.id === id);
+    if (!capsule) return;
+    
+    const now = new Date();
+    const openDate = new Date(capsule.openDate);
+    const isOpen = now >= openDate;
+    
+    if (!isOpen) {
+      alert('⏳ this capsule is still sealed. wait until ' + openDate.toLocaleDateString());
+      return;
+    }
+    
+    const detailView = document.getElementById('capsuleDetailView');
+    const gridView = document.getElementById('capsuleGridView');
+    const detailContent = document.getElementById('capsuleDetailContent');
+    
+    detailContent.innerHTML = `
+      <div class="capsule-detail">
+        <h2 style="font-family: 'Baloo 2'; font-size: 2rem;">${capsule.title}</h2>
+        <p><i class="fas fa-calendar"></i> opened on ${now.toLocaleDateString()}</p>
+        <div class="secret-content"><h3><i class="fas fa-envelope"></i> letter</h3><p>${capsule.letter || 'no letter written'}</p></div>
+        <div class="secret-content"><h3><i class="fas fa-mask"></i> secret</h3><p>${capsule.secret || 'no secret shared'}</p></div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
+          <div><i class="fas fa-heart"></i> ${capsule.feeling}</div>
+          <div><i class="fas fa-star"></i> ${'⭐'.repeat(capsule.rating)}</div>
+          <div><i class="fas fa-music"></i> ${capsule.song || 'no song'}</div>
+        </div>
+      </div>
+    `;
+    
+    gridView.classList.add('hidden');
+    detailView.classList.remove('hidden');
+  }
+
+  function backToGrid() {
+    document.getElementById('capsuleDetailView').classList.add('hidden');
+    document.getElementById('capsuleGridView').classList.remove('hidden');
+  }
+
+  // ========== CREATE CAPSULE FUNCTIONS ==========
+  const capsuleGridView = document.getElementById('capsuleGridView');
+  const createCapsuleView = document.getElementById('createCapsuleView');
+  const capsuleDetailView = document.getElementById('capsuleDetailView');
+
+  function showCreateCapsule() {
+    capsuleGridView.classList.add('hidden');
+    capsuleDetailView.classList.add('hidden');
+    createCapsuleView.classList.remove('hidden');
+    
+    document.getElementById('capsuleName').value = '';
+    document.getElementById('capsuleOpenDate').value = '';
+    document.getElementById('capsuleLetter').value = '';
+    document.getElementById('capsuleSecret').value = '';
+    document.getElementById('capsuleFeeling').value = 'happy';
+    document.getElementById('capsuleSong').value = '';
+    document.getElementById('photoUpload').value = '';
+    currentRating = 0;
+    updateRatingStars();
+  }
+
+  function setRating(rating) {
+    currentRating = rating;
+    updateRatingStars();
+  }
+
+  function updateRatingStars() {
+    const stars = document.querySelectorAll('#ratingStars i');
+    stars.forEach((star, index) => {
+      if (index < currentRating) star.classList.add('active');
+      else star.classList.remove('active');
+    });
+  }
+
+  function saveCapsule() {
+    const title = document.getElementById('capsuleName').value;
+    const openDate = document.getElementById('capsuleOpenDate').value;
+    const letter = document.getElementById('capsuleLetter').value;
+    const secret = document.getElementById('capsuleSecret').value;
+    const feeling = document.getElementById('capsuleFeeling').value;
+    const song = document.getElementById('capsuleSong').value;
+    
+    if (!title || !openDate) {
+      alert('please enter a title and open date ✧');
+      return;
+    }
+    
+    const newCapsule = {
+      id: Date.now(),
+      title,
+      openDate,
+      createdAt: new Date().toISOString(),
+      isOpen: false,
+      letter,
+      secret,
+      feeling,
+      rating: currentRating,
+      song
+    };
+    
+    capsules.push(newCapsule);
+    renderCapsuleGrid();
+    
+    createCapsuleView.classList.add('hidden');
+    capsuleGridView.classList.remove('hidden');
+    
+    const openDateObj = new Date(openDate);
+    showNotification(
+      '📦 Capsule Sealed', 
+      `"${title}" will open on ${openDateObj.toLocaleDateString()}`,
+      '🔒'
+    );
+  }
+
+  function lockCapsule() {
+    saveCapsule();
+  }
+
+  // ========== PHOTO UPLOAD ==========
   document.addEventListener('DOMContentLoaded', () => {
     const photoInput = document.getElementById('photoUpload');
     if (photoInput) {
       photoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const preview = document.getElementById('photoPreview');
-            preview.src = ev.target.result;
-            preview.style.display = 'block';
-          };
-          reader.readAsDataURL(file);
-        }
+        if (e.target.files[0]) alert('📸 photo ready for upload!');
       });
     }
   });
 
-  // save capsule (create or update)
-  async function saveCapsuleToServer() {
-    const title = document.getElementById('capsuleTitle').value;
-    const openDate = document.getElementById('capsuleOpenDate').value;
-    if (!title || !openDate) return alert('📅 title and open date needed');
-    
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('open_date', openDate);
-    formData.append('letter', document.getElementById('letterText').value);
-    formData.append('secret', document.getElementById('secretText').value);
-    formData.append('feeling', document.getElementById('feelingsText').value);
-    formData.append('song', document.getElementById('songInput').value);
-    formData.append('rating', selectedRating);
-    
-    const photoFile = document.getElementById('photoUpload').files[0];
-    if (photoFile) formData.append('photo', photoFile);
+  // ========== CLOSE MODALS ON OUTSIDE CLICK ==========
+  modal.addEventListener('click', (e) => e.target === modal && closeModal());
+  aboutModal.addEventListener('click', (e) => e.target === aboutModal && closeAboutModal());
+// ========== WORKING RATING STARS ==========
+let currentRating = 0;
 
-    const url = currentCapsuleId ? 
-      (API_URL + `/api/capsules/${currentCapsuleId}/contents`) : 
-      (API_URL + '/api/capsules');
-    const method = currentCapsuleId ? 'PUT' : 'POST';
+function setRating(rating) {
+  currentRating = rating;
+  updateRatingStars();
+  
+  // Store rating in a hidden input or state
+  console.log('Rating set to:', rating);
+}
 
-    try {
-      const res = await fetch(url, {
-        method,
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-        body: formData
-      });
-      if (!res.ok) throw new Error('save failed');
-      const result = await res.json();
-      alert('💾 saved with love');
-      backToDashboard();
-    } catch(e) { alert('error: ' + e.message); }
-  }
-
-  async function lockCapsuleNow() {
-    if (!currentCapsuleId) return alert('💧 save capsule first before locking');
-    if (!confirm('lock capsule? no more edits until open date')) return;
-    try {
-      const res = await fetchWithAuth('/api/capsules/' + currentCapsuleId + '/lock', { method: 'POST' });
-      if (!res.ok) throw new Error('lock failed');
-      alert('🔒 capsule sealed');
-      backToDashboard();
-    } catch(e) { alert(e.message); }
-  }
-
-  // view single capsule (only if open date passed, backend blocks)
-  async function viewCapsule(capsuleId) {
-    try {
-      const res = await fetchWithAuth('/api/capsules/' + capsuleId);
-      if (res.status === 403) {
-        return alert('⏳ this capsule is still locked. time will tell.');
-      }
-      const data = await res.json();
-      const cap = data.capsule;
-      // show opened view
-      document.getElementById('dashboardView').classList.add('hidden');
-      document.getElementById('openedCapsuleView').classList.remove('hidden');
-      const contentDiv = document.getElementById('openedCapsuleContent');
-      contentDiv.innerHTML = `
-        <div class="memory-section" style="grid-column:1/-1;">
-          <h2><i class="fas fa-capsules"></i> ${cap.title}</h2>
-          <p><i class="fas fa-calendar"></i> opened: ${new Date().toLocaleString()}</p>
-          ${cap.photo_url ? `<img src="${API_URL + cap.photo_url}" style="max-height:300px;">` : ''}
-          <p style="background:white; border-radius: 20px; padding:1rem;"><strong>✉️ letter</strong><br>${cap.letter || '—'}</p>
-          <p style="background:#fff0f5; border-radius: 20px; padding:1rem;"><strong>🤫 secret</strong><br>${cap.secret || '—'}</p>
-          <p><strong>💭 feeling</strong> ${cap.feeling || ''}</p>
-          <p><strong>🎵 song</strong> ${cap.song || 'silence'}</p>
-          <div class="rating">${'<i class="fas fa-star" style="opacity:1; color:#f7c15d;"></i>'.repeat(cap.rating || 0)}${'<i class="fas fa-star" style="opacity:0.3;"></i>'.repeat(5-(cap.rating||0))}</div>
-        </div>
-      `;
-    } catch(e) { alert(e.message); }
-  }
-
-  function backToDashboard() {
-    loadDashboard();
-  }
-
-  // rating
-  function rateStar(index) {
-    selectedRating = index + 1;
-    updateStars();
-  }
-  function updateStars() {
-    const stars = document.querySelectorAll('#ratingStars i');
-    stars.forEach((s, i) => {
-      if (i < selectedRating) s.classList.add('active'); else s.classList.remove('active');
-    });
-  }
-
-  // dark mode toggle
-  function toggleDark() {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('dark', document.body.classList.contains('dark-mode'));
-  }
-
-  // ---------- init on load ----------
-  window.onload = async () => {
-    // dark mode persistence
-    if (localStorage.getItem('dark') === 'true') document.body.classList.add('dark-mode');
-    
-    // photo preview listener (already attached above, safe to keep)
-    const photoInput = document.getElementById('photoUpload');
-    if (photoInput) {
-      photoInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(ev) {
-            const preview = document.getElementById('photoPreview');
-            preview.src = ev.target.result;
-            preview.style.display = 'block';
-          };
-          reader.readAsDataURL(file);
-        }
-      });
+function updateRatingStars() {
+  const stars = document.querySelectorAll('#ratingStars i');
+  stars.forEach((star, index) => {
+    if (index < currentRating) {
+      star.classList.add('active');
+    } else {
+      star.classList.remove('active');
     }
-
-    // auto-login if token exists
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const res = await fetchWithAuth('/api/auth/me');
-        if (res.ok) {
-          const data = await res.json();
-          currentUser = data.user;
-          document.getElementById('signInCard').classList.add('hidden');
-          document.getElementById('mainCard').classList.remove('hidden');
-          loadDashboard();
-        } else {
-          localStorage.removeItem('token');
-        }
-      } catch(e) { /* not logged in */ }
-    }
-  };
-
-  // style dark mode
-  const styleDark = document.createElement('style');
-  styleDark.textContent = `
-    body.dark-mode { background: #24202e; background-image: radial-gradient(circle at 10% 20%, #4a3e5a, transparent); }
-    body.dark-mode .glass-card { background: rgba(40, 30, 48, 0.75); border-color: #6e5a70; color: #ffeef5; }
-    body.dark-mode h1, body.dark-mode h2 { color: #ffd9e6; }
-    body.dark-mode input, body.dark-mode textarea { background: #332c3a; color: white; border-color: #9f8ba9; }
-  `;
-  document.head.appendChild(styleDark);
-</script>
-
-<!--
-======================================================
-       ☁️  BACKEND (NODE.JS) – CLOUD CAPSULE 
-======================================================
-Copy this whole block into server.js, then:
-
-1. Run:   npm install express sqlite3 bcrypt jsonwebtoken multer cors
-2. Run:   mkdir uploads
-3. Run:   node server.js
-
-👉 Now open http://localhost:3000 (or just this HTML file if you set API_URL correctly)
--->
-
-<!-- SERVER.JS (embedded as text for copy) -->
-<pre style="display:none;" id="serverCode">
-// server.js — cloud capsule backend (sqlite, auth, time‑lock)
-const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const path = require('path');
-const cors = require('cors');
-const fs = require('fs');
-
-const app = express();
-const PORT = 3000;
-const JWT_SECRET = 'cloudy-grunge-capsule-secret';
-
-app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static('uploads'));
-
-// multer for photo uploads
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => cb(null, Date.now() + '-' + file.originalname)
-});
-const upload = multer({ storage });
-
-// ensure uploads folder exists
-if (!fs.existsSync('uploads')) fs.mkdirSync('uploads');
-
-// db init
-const db = new sqlite3.Database('./capsule.db');
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS users (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    email TEXT UNIQUE,
-    password TEXT
-  )`);
-  db.run(`CREATE TABLE IF NOT EXISTS capsules (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    user_id INTEGER,
-    title TEXT,
-    open_date DATETIME,
-    locked INTEGER DEFAULT 0,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY(user_id) REFERENCES users(id)
-  )`);
-  db.run(`CREATE TABLE IF NOT EXISTS contents (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    capsule_id INTEGER UNIQUE,
-    letter TEXT,
-    secret TEXT,
-    feeling TEXT,
-    song TEXT,
-    rating INTEGER,
-    photo_url TEXT,
-    FOREIGN KEY(capsule_id) REFERENCES capsules(id)
-  )`);
-});
-
-// auth middleware
-function authenticateToken(req, res, next) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-  if (!token) return res.sendStatus(401);
-  jwt.verify(token, JWT_SECRET, (err, user) => {
-    if (err) return res.sendStatus(403);
-    req.user = user;
-    next();
   });
 }
 
-// ---------- auth routes ----------
-app.post('/api/auth/register', async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) return res.status(400).json({ error: 'email+pass' });
-  const hash = await bcrypt.hash(password, 10);
-  db.run('INSERT INTO users (email, password) VALUES (?, ?)', [email, hash], function(err) {
-    if (err) return res.status(400).json({ error: 'email exists' });
-    res.json({ success: true });
-  });
-});
-
-app.post('/api/auth/login', (req, res) => {
-  const { email, password } = req.body;
-  db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
-    if (!user) return res.status(400).json({ error: 'invalid' });
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ error: 'invalid' });
-    const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET);
-    res.json({ token, user: { id: user.id, email: user.email } });
-  });
-});
-
-app.get('/api/auth/me', authenticateToken, (req, res) => {
-  res.json({ user: req.user });
-});
-
-// ---------- capsules ----------
-app.get('/api/capsules', authenticateToken, (req, res) => {
-  db.all('SELECT * FROM capsules WHERE user_id = ? ORDER BY created_at DESC', [req.user.id], (err, caps) => {
-    res.json(caps);
-  });
-});
-
-// create capsule (POST)
-app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) => {
-  const { title, open_date, letter, secret, feeling, song, rating } = req.body;
-  const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
-  db.run('INSERT INTO capsules (user_id, title, open_date, locked) VALUES (?, ?, ?, 0)', 
-    [req.user.id, title, open_date], function(err) {
-      if (err) return res.status(500).json({ error: err.message });
-      const capsuleId = this.lastID;
-      db.run(`INSERT INTO contents (capsule_id, letter, secret, feeling, song, rating, photo_url) 
-              VALUES (?, ?, ?, ?, ?, ?, ?)`,
-              [capsuleId, letter, secret, feeling, song, rating, photo_url], (err2) => {
-        if (err2) return res.status(500).json(err2);
-        res.json({ id: capsuleId });
-      });
-  });
-});
-
-// get single capsule (with time-lock)
-app.get('/api/capsules/:id', authenticateToken, (req, res) => {
-  db.get(`SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.song, ct.rating, ct.photo_url 
-          FROM capsules c LEFT JOIN contents ct ON c.id = ct.capsule_id 
-          WHERE c.id = ? AND c.user_id = ?`, [req.params.id, req.user.id], (err, capsule) => {
-    if (err) return res.status(404);
-    if (!capsule) return res.sendStatus(404);
-    const now = new Date();
-    const open = new Date(capsule.open_date);
-    if (now < open) {
-      // locked: return only metadata, no sensitive content
-      capsule.letter = null; capsule.secret = null; capsule.feeling = null; capsule.song = null; capsule.rating = null; capsule.photo_url = null;
-      return res.json({ capsule, locked: true });
-    }
-    res.json({ capsule, locked: false });
-  });
-});
-
-// update contents (only if not locked AND not passed open date)
-app.put('/api/capsules/:id/contents', authenticateToken, upload.single('photo'), (req, res) => {
-  const capsuleId = req.params.id;
-  db.get('SELECT * FROM capsules WHERE id = ? AND user_id = ?', [capsuleId, req.user.id], (err, cap) => {
-    if (!cap) return res.status(404);
-    if (cap.locked === 1) return res.status(403).json({ error: 'capsule is locked' });
-    const now = new Date(); const open = new Date(cap.open_date);
-    if (now >= open) return res.status(403).json({ error: 'capsule already opened, read only' });
-    
-    const { letter, secret, feeling, song, rating } = req.body;
-    let photo_url = req.file ? `/uploads/${req.file.filename}` : null;
-    
-    db.get('SELECT id FROM contents WHERE capsule_id = ?', [capsuleId], (err, row) => {
-      if (row) {
-        let query = 'UPDATE contents SET letter = ?, secret = ?, feeling = ?, song = ?, rating = ?';
-        const params = [letter, secret, feeling, song, rating];
-        if (photo_url) {
-          query += ', photo_url = ?';
-          params.push(photo_url);
-        }
-        query += ' WHERE capsule_id = ?';
-        params.push(capsuleId);
-        db.run(query, params, (err2) => res.json({ updated: true }));
-      } else {
-        // insert if not exists
-        db.run('INSERT INTO contents (capsule_id, letter, secret, feeling, song, rating, photo_url) VALUES (?,?,?,?,?,?,?)',
-          [capsuleId, letter, secret, feeling, song, rating, photo_url], (err2) => res.json({ created: true }));
+// Initialize rating stars
+document.addEventListener('DOMContentLoaded', () => {
+  // Reset rating when form is shown
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.id === 'createCapsuleView' && 
+          !mutation.target.classList.contains('hidden')) {
+        currentRating = 0;
+        updateRatingStars();
       }
     });
   });
+  
+  const createView = document.getElementById('createCapsuleView');
+  if (createView) {
+    observer.observe(createView, { attributes: true, attributeFilter: ['class'] });
+  }
 });
 
-// lock capsule
-app.post('/api/capsules/:id/lock', authenticateToken, (req, res) => {
-  db.run('UPDATE capsules SET locked = 1 WHERE id = ? AND user_id = ?', [req.params.id, req.user.id], function(err) {
-    if (err) return res.status(500);
-    res.json({ locked: true });
-  });
-});
+// ========== CLICKABLE NOTIFICATIONS ==========
+function showNotification(title, message, capsuleId, icon = '🎁') {
+  const container = document.getElementById('notificationContainer');
+  if (!container) return;
+  
+  const notification = document.createElement('div');
+  notification.className = 'notification';
+  notification.setAttribute('data-capsule-id', capsuleId);
+  notification.style.cursor = 'pointer';
+  notification.onclick = () => {
+    if (capsuleId) {
+      viewCapsule(capsuleId);
+      notification.remove();
+    }
+  };
+  
+  notification.innerHTML = `
+    <i class="fas ${icon === '🎁' ? 'fa-gift' : icon === '🔒' ? 'fa-lock' : 'fa-clock'}"></i>
+    <div class="notification-content">
+      <div class="notification-title">${title}</div>
+      <div class="notification-message">${message}</div>
+    </div>
+  `;
+  
+  container.appendChild(notification);
+  
+  // Auto remove after 8 seconds
+  setTimeout(() => {
+    if (notification.parentNode) {
+      notification.remove();
+    }
+  }, 8000);
+}
 
-// ✨ serve frontend automatically if you put index.html in a "public" folder
-app.use(express.static('public'));
+// ========== CHECK FOR NEWLY OPENED CAPSULES ==========
+async function checkForOpenedCapsules() {
+  if (!localStorage.getItem('token')) return;
+  
+  try {
+    const response = await fetchWithAuth('/api/capsules/check-opened');
+    if (!response.ok) return;
+    
+    const openedCapsules = await response.json();
+    
+    openedCapsules.forEach(capsule => {
+      showNotification(
+        '✨ Capsule Opened!', 
+        `"${capsule.title}" is ready to view - click to open`,
+        capsule.id,
+        '🎁'
+      );
+    });
+    
+    // Refresh capsule list if any opened
+    if (openedCapsules.length > 0) {
+      await loadCapsules();
+    }
+  } catch (error) {
+    console.error('Error checking opened capsules:', error);
+  }
+}
 
-app.listen(PORT, () => console.log(`☁️ cloud capsule running on http://localhost:${PORT}`));
-</pre>
+// Start periodic checking
+function startOpenedCapsuleCheck() {
+  // Check immediately
+  checkForOpenedCapsules();
+  
+  // Then check every 30 seconds
+  setInterval(checkForOpenedCapsules, 30000);
+}
 
+// Call this after login
+// Add this line at the end of handleLogin and handleRegister:
+// startOpenedCapsuleCheck();
+
+// ========== ENHANCED VIEW CAPSULE ==========
+async function viewCapsule(id) {
+  try {
+    const response = await fetchWithAuth('/api/capsules/' + id);
+    
+    if (!response.ok) {
+      throw new Error('Failed to load capsule');
+    }
+    
+    const capsule = await response.json();
+    
+    const detailView = document.getElementById('capsuleDetailView');
+    const gridView = document.getElementById('capsuleGridView');
+    const detailContent = document.getElementById('capsuleDetailContent');
+    
+    const openDate = new Date(capsule.open_date);
+    const now = new Date();
+    const isOpen = now >= openDate;
+    
+    if (!isOpen) {
+      alert('⏳ this capsule is still sealed. wait until ' + openDate.toLocaleDateString());
+      return;
+    }
+    
+    // Format rating stars
+    const ratingStars = '⭐'.repeat(capsule.rating || 0);
+    
+    detailContent.innerHTML = `
+      <div class="capsule-detail">
+        <h2 style="font-family: 'Baloo 2'; font-size: 2rem;">${capsule.title}</h2>
+        <p><i class="fas fa-calendar"></i> opened on ${now.toLocaleDateString()}</p>
+        
+        ${capsule.photo_url ? `
+          <div style="text-align: center; margin: 1rem 0;">
+            <img src="${API_URL + capsule.photo_url}" style="max-width: 100%; max-height: 300px; border-radius: 20px; border: 4px solid white;">
+          </div>
+        ` : ''}
+        
+        <div class="secret-content">
+          <h3><i class="fas fa-envelope"></i> letter</h3>
+          <p>${capsule.letter || 'no letter written'}</p>
+        </div>
+        
+        <div class="secret-content">
+          <h3><i class="fas fa-mask"></i> secret</h3>
+          <p>${capsule.secret || 'no secret shared'}</p>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
+          <div><i class="fas fa-heart"></i> ${capsule.feeling || 'not specified'}</div>
+          <div><i class="fas fa-star"></i> ${ratingStars}</div>
+          <div><i class="fas fa-music"></i> ${capsule.song || 'no song'}</div>
+        </div>
+      </div>
+    `;
+    
+    gridView.classList.add('hidden');
+    detailView.classList.remove('hidden');
+    
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+
+// ========== UPDATE SAVE CAPSULE TO INCLUDE RATING ==========
+async function saveCapsule() {
+  const title = document.getElementById('capsuleName').value;
+  const openDate = document.getElementById('capsuleOpenDate').value;
+  const letter = document.getElementById('capsuleLetter').value;
+  const secret = document.getElementById('capsuleSecret').value;
+  const feeling = document.getElementById('capsuleFeeling').value;
+  const song = document.getElementById('capsuleSong').value;
+  const photoFile = document.getElementById('photoUpload').files[0];
+  
+  if (!title || !openDate) {
+    alert('please enter a title and open date ✧');
+    return;
+  }
+  
+  const formData = new FormData();
+  formData.append('title', title);
+  formData.append('open_date', openDate);
+  formData.append('letter', letter);
+  formData.append('secret', secret);
+  formData.append('feeling', feeling);
+  formData.append('rating', currentRating);  // Use currentRating
+  formData.append('song', song);
+  
+  if (photoFile) {
+    formData.append('photo', photoFile);
+  }
+  
+  try {
+    const response = await fetch(API_URL + '/api/capsules', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: formData
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to save capsule');
+    }
+    
+    await loadCapsules();
+    
+    createCapsuleView.classList.add('hidden');
+    capsuleGridView.classList.remove('hidden');
+    
+    const openDateObj = new Date(openDate);
+    showNotification(
+      '📦 Capsule Sealed', 
+      `"${title}" will open on ${openDateObj.toLocaleDateString()}`,
+      data.id,
+      '🔒'
+    );
+    
+  } catch (error) {
+    alert('Error: ' + error.message);
+  }
+}
+</script>
 </body>
 </html>
