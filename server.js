@@ -1,6 +1,6 @@
-// server.js - Cloud Capsule Backend with MySQL
+// server.js - Cloud Capsule Backend
 const express = require('express');
-const mysql = require('mysql2/promise');
+const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
@@ -25,86 +25,72 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-// ==================== MYSQL DATABASE CONNECTION ====================
-// YOUR EZYRO DATABASE DETAILS
-const DB_HOST = 'sql303.ezyro.com';
-const DB_USER = 'ezyro_41198476';
-const DB_PASSWORD = '7w4kqx06'; // Your vPanel password
-const DB_NAME = 'ezyro_41198476_Cloudsdatabase';
+// ==================== SQLITE DATABASE SETUP ====================
+const db = new sqlite3.Database('./capsule.db');
 
-// Create connection pool
-const pool = mysql.createPool({
-  host: DB_HOST,
-  user: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
+db.serialize(() => {
+  // Users table
+  db.run(`CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    password TEXT NOT NULL,
+    reset_token TEXT,
+    reset_token_expiry DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  // Capsules table
+  db.run(`CREATE TABLE IF NOT EXISTS capsules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    title TEXT NOT NULL,
+    open_date DATETIME NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+  )`);
+
+  // Contents table
+  db.run(`CREATE TABLE IF NOT EXISTS contents (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    capsule_id INTEGER UNIQUE NOT NULL,
+    letter TEXT,
+    secret TEXT,
+    feeling TEXT,
+    rating INTEGER DEFAULT 0,
+    song TEXT,
+    photo_urls TEXT,
+    FOREIGN KEY(capsule_id) REFERENCES capsules(id) ON DELETE CASCADE
+  )`);
+
+  console.log('✅ SQLite database setup complete');
 });
 
-// Test connection
-async function testConnection() {
-  try {
-    const connection = await pool.getConnection();
-    console.log('✅ Connected to MySQL database on ezyro');
-    connection.release();
-    return true;
-  } catch (err) {
-    console.error('❌ MySQL connection error:', err);
-    return false;
-  }
-}
-
-// Helper function to run queries
-async function query(sql, params) {
-  try {
-    const [rows] = await pool.execute(sql, params);
-    return rows;
-  } catch (error) {
-    console.error('Database query error:', error);
-    throw error;
-  }
-}
-
-// Helper to get a single row
-async function getOne(sql, params) {
-  const rows = await query(sql, params);
-  return rows.length > 0 ? rows[0] : null;
-}
-
-// Test connection on startup
-testConnection();
-
-// ==================== EMAIL SETUP (for forgot password) ====================
-let transporter;
-
-// Create test account for development
-if (process.env.NODE_ENV !== 'production') {
-  nodemailer.createTestAccount((err, account) => {
-    if (err) {
-      console.error('Failed to create test email account:', err);
-    } else {
-      transporter = nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
-        auth: {
-          user: account.user,
-          pass: account.pass
-        }
-      });
-      console.log('✅ Test email account created. Preview URL: ' + account.web);
-    }
+// Helper functions
+function query(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
   });
-} else {
-  // Production email config - set these in environment variables
-  transporter = nodemailer.createTransport({
-    service: process.env.EMAIL_SERVICE || 'gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS
-    }
+}
+
+function getOne(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+}
+
+function run(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function(err) {
+      if (err) reject(err);
+      else resolve({ lastID: this.lastID, changes: this.changes });
+    });
   });
 }
 
@@ -132,6 +118,26 @@ const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }
+});
+
+// ==================== EMAIL SETUP ====================
+let transporter;
+
+nodemailer.createTestAccount((err, account) => {
+  if (err) {
+    console.error('Failed to create test email account:', err);
+  } else {
+    transporter = nodemailer.createTransport({
+      host: account.smtp.host,
+      port: account.smtp.port,
+      secure: account.smtp.secure,
+      auth: {
+        user: account.user,
+        pass: account.pass
+      }
+    });
+    console.log('✅ Test email account created. Preview URL: ' + account.web);
+  }
 });
 
 // ==================== AUTH MIDDLEWARE ====================
@@ -163,29 +169,21 @@ app.post('/api/auth/register', async (req, res) => {
   }
 
   try {
-    // Check if user exists
-    const existing = await getOne(
-      'SELECT id FROM users WHERE email = ? OR username = ?',
-      [email, username]
-    );
+    const existing = await getOne('SELECT id FROM users WHERE email = ? OR username = ?', [email, username]);
     
     if (existing) {
       return res.status(400).json({ error: 'User with this email or username already exists' });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert new user
-    const result = await query(
+    const result = await run(
       'INSERT INTO users (username, email, password) VALUES (?, ?, ?)',
       [username, email, hashedPassword]
     );
-    
-    const userId = result.insertId;
 
     const token = jwt.sign(
-      { id: userId, username, email }, 
+      { id: result.lastID, username, email }, 
       JWT_SECRET, 
       { expiresIn: '7d' }
     );
@@ -193,7 +191,7 @@ app.post('/api/auth/register', async (req, res) => {
     res.status(201).json({
       message: 'User created successfully',
       token,
-      user: { id: userId, username, email }
+      user: { id: result.lastID, username, email }
     });
     
   } catch (error) {
@@ -277,19 +275,16 @@ app.post('/api/auth/forgot-password', async (req, res) => {
       return res.json({ message: 'If your email exists, you will receive a reset link' });
     }
 
-    // Generate reset token
     const resetToken = crypto.randomBytes(32).toString('hex');
-    const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+    const tokenExpiry = new Date(Date.now() + 3600000).toISOString();
 
-    await query(
+    await run(
       'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?',
       [resetToken, tokenExpiry, user.id]
     );
 
-    // Create reset link
     const resetLink = `${FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    // Send email
     try {
       const mailOptions = {
         from: '"Cloud Capsule" <noreply@cloudcapsule.com>',
@@ -343,7 +338,7 @@ app.post('/api/auth/verify-reset-token', async (req, res) => {
 
   try {
     const user = await getOne(
-      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()',
+      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > datetime("now")',
       [token]
     );
 
@@ -373,7 +368,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
 
   try {
     const user = await getOne(
-      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > NOW()',
+      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > datetime("now")',
       [token]
     );
 
@@ -383,7 +378,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-    await query(
+    await run(
       'UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?',
       [hashedPassword, user.id]
     );
@@ -398,12 +393,12 @@ app.post('/api/auth/reset-password', async (req, res) => {
 
 // ==================== CAPSULE ROUTES ====================
 
-// Get all capsules for user
+// Get all capsules
 app.get('/api/capsules', authenticateToken, async (req, res) => {
   try {
     const capsules = await query(
       `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_urls,
-       CASE WHEN c.open_date <= NOW() THEN 1 ELSE 0 END as is_open
+       CASE WHEN datetime(c.open_date) <= datetime('now') THEN 1 ELSE 0 END as is_open
        FROM capsules c
        LEFT JOIN contents ct ON c.id = ct.capsule_id
        WHERE c.user_id = ?
@@ -411,7 +406,6 @@ app.get('/api/capsules', authenticateToken, async (req, res) => {
       [req.user.id]
     );
 
-    // Parse photo_urls from JSON string to array
     const processed = capsules.map(cap => ({
       ...cap,
       photo_urls: cap.photo_urls ? JSON.parse(cap.photo_urls) : []
@@ -425,7 +419,7 @@ app.get('/api/capsules', authenticateToken, async (req, res) => {
   }
 });
 
-// Create new capsule
+// Create capsule
 app.post('/api/capsules', authenticateToken, upload.array('photos', 10), async (req, res) => {
   const { title, open_date, letter, secret, feeling, rating, song } = req.body;
   const files = req.files;
@@ -437,40 +431,27 @@ app.post('/api/capsules', authenticateToken, upload.array('photos', 10), async (
     return res.status(400).json({ error: 'Title and open date are required' });
   }
 
-  const connection = await pool.getConnection();
-  
   try {
-    await connection.beginTransaction();
-
-    // Insert capsule
-    const [capsuleResult] = await connection.execute(
+    const capsuleResult = await run(
       'INSERT INTO capsules (user_id, title, open_date) VALUES (?, ?, ?)',
       [req.user.id, title, open_date]
     );
 
-    const capsuleId = capsuleResult.insertId;
-
-    // Insert contents
-    await connection.execute(
+    await run(
       `INSERT INTO contents (capsule_id, letter, secret, feeling, rating, song, photo_urls)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [capsuleId, letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photoUrlsJson]
+      [capsuleResult.lastID, letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photoUrlsJson]
     );
 
-    await connection.commit();
-    
     res.status(201).json({ 
       message: 'Capsule created successfully',
-      id: capsuleId,
+      id: capsuleResult.lastID,
       photoCount: photoUrls.length
     });
     
   } catch (error) {
-    await connection.rollback();
     console.error('Create capsule error:', error);
     res.status(500).json({ error: 'Failed to save capsule contents' });
-  } finally {
-    connection.release();
   }
 });
 
@@ -481,7 +462,7 @@ app.get('/api/capsules/:id', authenticateToken, async (req, res) => {
   try {
     const capsules = await query(
       `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_urls,
-       CASE WHEN c.open_date <= NOW() THEN 1 ELSE 0 END as is_open
+       CASE WHEN datetime(c.open_date) <= datetime('now') THEN 1 ELSE 0 END as is_open
        FROM capsules c
        LEFT JOIN contents ct ON c.id = ct.capsule_id
        WHERE c.id = ? AND c.user_id = ?`,
@@ -542,20 +523,13 @@ app.put('/api/capsules/:id', authenticateToken, upload.array('photos', 10), asyn
   const { title, open_date, letter, secret, feeling, rating, song } = req.body;
   const files = req.files;
   
-  const connection = await pool.getConnection();
-  
   try {
-    // Check if capsule exists and belongs to user
-    const capsules = await connection.execute(
-      'SELECT * FROM capsules WHERE id = ? AND user_id = ?',
-      [capsuleId, req.user.id]
-    );
+    const capsule = await getOne('SELECT * FROM capsules WHERE id = ? AND user_id = ?', [capsuleId, req.user.id]);
 
-    if (capsules[0].length === 0) {
+    if (!capsule) {
       return res.status(404).json({ error: 'Capsule not found' });
     }
 
-    const capsule = capsules[0][0];
     const now = new Date();
     const openDate = new Date(capsule.open_date);
     
@@ -563,49 +537,35 @@ app.put('/api/capsules/:id', authenticateToken, upload.array('photos', 10), asyn
       return res.status(403).json({ error: 'Cannot edit an opened capsule' });
     }
 
-    await connection.beginTransaction();
-
-    // Update capsule
-    await connection.execute(
+    await run(
       'UPDATE capsules SET title = ?, open_date = ? WHERE id = ?',
       [title || capsule.title, open_date || capsule.open_date, capsuleId]
     );
 
-    // Get existing photos
-    const contents = await connection.execute(
-      'SELECT photo_urls FROM contents WHERE capsule_id = ?',
-      [capsuleId]
-    );
+    const contents = await getOne('SELECT photo_urls FROM contents WHERE capsule_id = ?', [capsuleId]);
 
     let existingPhotos = [];
-    if (contents[0].length > 0 && contents[0][0].photo_urls) {
-      existingPhotos = JSON.parse(contents[0][0].photo_urls);
+    if (contents && contents.photo_urls) {
+      existingPhotos = JSON.parse(contents.photo_urls);
     }
 
-    // Add new photos
     const newPhotos = files ? files.map(f => `/uploads/${f.filename}`) : [];
     const allPhotos = [...existingPhotos, ...newPhotos];
     const photoUrlsJson = JSON.stringify(allPhotos);
 
-    // Update contents
-    await connection.execute(
+    await run(
       `UPDATE contents SET letter = ?, secret = ?, feeling = ?, rating = ?, song = ?, photo_urls = ? WHERE capsule_id = ?`,
       [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photoUrlsJson, capsuleId]
     );
 
-    await connection.commit();
-    
     res.json({ 
       message: 'Capsule updated successfully',
       photoCount: allPhotos.length
     });
     
   } catch (error) {
-    await connection.rollback();
     console.error('Update capsule error:', error);
     res.status(500).json({ error: 'Failed to update capsule' });
-  } finally {
-    connection.release();
   }
 });
 
@@ -614,12 +574,9 @@ app.delete('/api/capsules/:id', authenticateToken, async (req, res) => {
   const capsuleId = req.params.id;
 
   try {
-    const result = await query(
-      'DELETE FROM capsules WHERE id = ? AND user_id = ?',
-      [capsuleId, req.user.id]
-    );
+    const result = await run('DELETE FROM capsules WHERE id = ? AND user_id = ?', [capsuleId, req.user.id]);
 
-    if (result.affectedRows === 0) {
+    if (result.changes === 0) {
       return res.status(404).json({ error: 'Capsule not found' });
     }
 
@@ -631,13 +588,13 @@ app.delete('/api/capsules/:id', authenticateToken, async (req, res) => {
   }
 });
 
-// Check for opened capsules
+// Check opened capsules
 app.get('/api/capsules/check-opened', authenticateToken, async (req, res) => {
   try {
     const capsules = await query(
       `SELECT id, title FROM capsules 
        WHERE user_id = ? 
-       AND open_date <= NOW()`,
+       AND datetime(open_date) <= datetime('now')`,
       [req.user.id]
     );
 
@@ -680,5 +637,5 @@ app.listen(PORT, () => {
   console.log(`☁️ Cloud Capsule server running on port ${PORT}`);
   console.log(`📍 Local: http://localhost:${PORT}`);
   console.log(`📁 Uploads folder: ${path.join(__dirname, 'uploads')}`);
-  console.log(`💾 Database: MySQL (${DB_HOST}/${DB_NAME})`);
+  console.log(`💾 Database: SQLite (./capsule.db)`);
 });
