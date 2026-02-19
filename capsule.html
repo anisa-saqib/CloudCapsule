@@ -502,11 +502,13 @@
       box-shadow: 0 20px 40px rgba(140, 70, 100, 0.25), 0 8px 0 #b07a9a;
       padding: 2rem 1.8rem;
       width: 90%;
-      max-width: 380px;
+      max-width: 400px;
       position: relative;
       transform: scale(0.98);
       transition: transform 0.2s ease;
       pointer-events: auto;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .modal-overlay.show .modal-card {
@@ -580,6 +582,15 @@
       background: #253b5e;
       border-color: #4a6080;
       color: #e8f0ff;
+    }
+
+    .modal-card input::placeholder {
+      color: #b07a9a;
+      opacity: 0.6;
+    }
+
+    body.dark-mode .modal-card input::placeholder {
+      color: #a0c0ff;
     }
 
     .modal-btn {
@@ -1031,6 +1042,28 @@
       background: rgba(20, 30, 50, 0.5);
     }
 
+    .photo-gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 1.5rem 0;
+      justify-content: center;
+    }
+
+    .photo-gallery img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 15px;
+      border: 3px solid white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease;
+    }
+
+    .photo-gallery img:hover {
+      transform: scale(1.05);
+    }
+
     /* === CREATE CAPSULE FORM === */
     .capsule-form {
       display: grid;
@@ -1088,10 +1121,31 @@
       padding: 1rem;
       text-align: center;
       cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .file-upload:hover {
+      background: rgba(255, 255, 255, 0.2);
     }
 
     body.dark-mode .file-upload {
       border-color: #4a6080;
+    }
+
+    #photoPreview {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    #photoPreview img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 15px;
+      border: 3px solid white;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     /* === WORKING RATING STARS === */
@@ -1180,6 +1234,7 @@
       .capsule-form { grid-template-columns: 1fr; }
       .form-actions { flex-direction: column; }
       .sign-out-btn { top: 10px; right: 10px; padding: 0.4rem 1rem; font-size: 0.8rem; }
+      .modal-card { padding: 1.5rem; }
     }
   </style>
 </head>
@@ -1225,11 +1280,12 @@
   </div>
 </div>
 
-<!-- LOGIN/REGISTER MODAL -->
+<!-- LOGIN/REGISTER/FORGOT PASSWORD MODAL -->
 <div id="modalOverlay" class="modal-overlay">
   <div class="modal-card">
     <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
     
+    <!-- LOGIN FORM -->
     <div id="loginForm">
       <h2>✧ welcome back ✧</h2>
       <input type="email" id="loginEmail" placeholder="email">
@@ -1237,10 +1293,14 @@
         <input type="password" id="loginPassword" placeholder="password">
         <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('loginPassword', this)"></i>
       </div>
+      <div style="text-align: right; margin-top: -0.5rem; margin-bottom: 1rem;">
+        <span class="switch-text" style="font-size: 0.8rem;" onclick="showForgotPassword()">forgot password?</span>
+      </div>
       <button class="modal-btn" onclick="handleLogin()">LOG IN</button>
       <div class="switch-text" onclick="switchToRegister()">new here? get started →</div>
     </div>
 
+    <!-- REGISTER FORM -->
     <div id="registerForm" class="hidden">
       <h2>✧ hey there! ✧</h2>
       <p style="font-size: 1rem; margin-bottom: 0.8rem;">ready to make some memories?</p>
@@ -1256,6 +1316,31 @@
       </div>
       <button class="modal-btn" onclick="handleRegister()">GET STARTED</button>
       <div class="switch-text" onclick="switchToLogin()">already have an account? log in →</div>
+    </div>
+
+    <!-- FORGOT PASSWORD FORM -->
+    <div id="forgotPasswordForm" class="hidden">
+      <h2>✧ reset password ✧</h2>
+      <p style="font-size: 1rem; margin-bottom: 1rem;">enter your email to receive a reset link</p>
+      <input type="email" id="resetEmail" placeholder="email">
+      <button class="modal-btn" onclick="requestPasswordReset()">SEND RESET LINK</button>
+      <div class="switch-text" style="margin-top: 1rem;" onclick="switchToLogin()">back to login →</div>
+    </div>
+
+    <!-- RESET PASSWORD FORM (shown when clicking link from email) -->
+    <div id="resetPasswordForm" class="hidden">
+      <h2>✧ new password ✧</h2>
+      <p style="font-size: 1rem; margin-bottom: 1rem;">enter your new password</p>
+      <div class="password-container">
+        <input type="password" id="newPassword" placeholder="new password">
+        <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('newPassword', this)"></i>
+      </div>
+      <div class="password-container">
+        <input type="password" id="confirmNewPassword" placeholder="confirm password">
+        <i class="fas fa-eye peek-icon" onclick="togglePasswordVisibility('confirmNewPassword', this)"></i>
+      </div>
+      <button class="modal-btn" onclick="resetPassword()">RESET PASSWORD</button>
+      <div class="switch-text" style="margin-top: 1rem;" onclick="switchToLogin()">back to login →</div>
     </div>
   </div>
 </div>
@@ -1309,24 +1394,50 @@
             <h3><i class="fas fa-info-circle"></i> basics</h3>
             <input type="text" id="capsuleName" placeholder="capsule name">
             <input type="datetime-local" id="capsuleOpenDate">
-            <h3 style="margin-top: 1.5rem;"><i class="fas fa-camera"></i> photo</h3>
+            
+            <h3 style="margin-top: 1.5rem;"><i class="fas fa-camera"></i> photos (up to 10)</h3>
             <div class="file-upload" onclick="document.getElementById('photoUpload').click()">
               <i class="fas fa-cloud-upload-alt" style="font-size: 2rem; margin-bottom: 0.5rem;"></i>
-              <p>click to upload a memory</p>
-              <input type="file" id="photoUpload" style="display: none;" accept="image/*">
+              <p>click to select multiple photos</p>
+              <small style="opacity: 0.7;">you can select up to 10 images</small>
+              <input type="file" id="photoUpload" style="display: none;" accept="image/*" multiple>
             </div>
+            <div id="photoPreview"></div>
           </div>
+          
           <div class="form-section">
             <h3><i class="fas fa-envelope"></i> letter</h3>
             <textarea id="capsuleLetter" placeholder="dear future me..."></textarea>
             <h3 style="margin-top: 1rem;"><i class="fas fa-mask"></i> secret</h3>
             <textarea id="capsuleSecret" placeholder="something only you know..."></textarea>
           </div>
+          
           <div class="form-section" style="grid-column: 1 / -1;">
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-              <div><h3><i class="fas fa-heart"></i> feeling</h3><select id="capsuleFeeling"><option value="happy">happy</option><option value="nostalgic">nostalgic</option><option value="hopeful">hopeful</option><option value="thoughtful">thoughtful</option><option value="excited">excited</option></select></div>
-              <div><h3><i class="fas fa-star"></i> rating</h3><div class="rating-stars" id="ratingStars"><i class="fas fa-star" onclick="setRating(1)"></i><i class="fas fa-star" onclick="setRating(2)"></i><i class="fas fa-star" onclick="setRating(3)"></i><i class="fas fa-star" onclick="setRating(4)"></i><i class="fas fa-star" onclick="setRating(5)"></i></div></div>
-              <div><h3><i class="fas fa-music"></i> song</h3><input type="text" id="capsuleSong" placeholder="artist - track"></div>
+              <div>
+                <h3><i class="fas fa-heart"></i> feeling</h3>
+                <select id="capsuleFeeling">
+                  <option value="happy">happy</option>
+                  <option value="nostalgic">nostalgic</option>
+                  <option value="hopeful">hopeful</option>
+                  <option value="thoughtful">thoughtful</option>
+                  <option value="excited">excited</option>
+                </select>
+              </div>
+              <div>
+                <h3><i class="fas fa-star"></i> rating</h3>
+                <div class="rating-stars" id="ratingStars">
+                  <i class="fas fa-star" onclick="setRating(1)"></i>
+                  <i class="fas fa-star" onclick="setRating(2)"></i>
+                  <i class="fas fa-star" onclick="setRating(3)"></i>
+                  <i class="fas fa-star" onclick="setRating(4)"></i>
+                  <i class="fas fa-star" onclick="setRating(5)"></i>
+                </div>
+              </div>
+              <div>
+                <h3><i class="fas fa-music"></i> song</h3>
+                <input type="text" id="capsuleSong" placeholder="artist - track">
+              </div>
             </div>
           </div>
         </div>
@@ -1350,6 +1461,7 @@
   let capsules = [];
   let checkInterval = null;
   let notificationCheckInterval = null;
+  let resetToken = null;
 
   // ========== DARK MODE TOGGLE ==========
   function toggleDarkMode() {
@@ -1383,7 +1495,7 @@
     options.headers = {
       ...options.headers,
       'Authorization': token ? `Bearer ${token}` : '',
-      'Content-Type': 'application/json'
+      ...(options.body instanceof FormData ? {} : { 'Content-Type': 'application/json' })
     };
     
     try {
@@ -1400,7 +1512,6 @@
     const container = document.getElementById('notificationContainer');
     if (!container) return;
     
-    // Remove old notifications if too many
     if (container.children.length > 3) {
       container.removeChild(container.firstChild);
     }
@@ -1408,7 +1519,6 @@
     const notification = document.createElement('div');
     notification.className = 'notification';
     notification.setAttribute('data-capsule-id', capsuleId);
-    notification.setAttribute('onclick', `handleNotificationClick(this, ${capsuleId})`);
     
     let iconClass = 'fa-gift';
     if (icon === '🔒') iconClass = 'fa-lock';
@@ -1422,7 +1532,6 @@
       </div>
     `;
     
-    // Make it clickable
     notification.addEventListener('click', function() {
       if (capsuleId) {
         viewCapsule(capsuleId);
@@ -1432,19 +1541,12 @@
     
     container.appendChild(notification);
     
-    // Auto remove after 8 seconds
     setTimeout(() => {
       if (notification.parentNode) {
         notification.remove();
       }
     }, 8000);
   }
-
-  // Fallback for onclick attribute
-  window.handleNotificationClick = function(element, capsuleId) {
-    viewCapsule(capsuleId);
-    element.remove();
-  };
 
   // ========== PASSWORD PEEK TOGGLE ==========
   function togglePasswordVisibility(inputId, icon) {
@@ -1467,18 +1569,28 @@
   const aboutModal = document.getElementById('aboutModal');
   const loginForm = document.getElementById('loginForm');
   const registerForm = document.getElementById('registerForm');
+  const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+  const resetPasswordForm = document.getElementById('resetPasswordForm');
   const homepage = document.getElementById('homepage');
   const mainApp = document.getElementById('mainApp');
 
   function openModal(type) {
     if (!modal) return;
     modal.classList.add('show');
+    
+    loginForm.classList.add('hidden');
+    registerForm.classList.add('hidden');
+    if (forgotPasswordForm) forgotPasswordForm.classList.add('hidden');
+    if (resetPasswordForm) resetPasswordForm.classList.add('hidden');
+    
     if (type === 'login') {
-      if (loginForm) loginForm.classList.remove('hidden');
-      if (registerForm) registerForm.classList.add('hidden');
-    } else {
-      if (loginForm) loginForm.classList.add('hidden');
-      if (registerForm) registerForm.classList.remove('hidden');
+      loginForm.classList.remove('hidden');
+    } else if (type === 'register') {
+      registerForm.classList.remove('hidden');
+    } else if (type === 'forgot') {
+      forgotPasswordForm.classList.remove('hidden');
+    } else if (type === 'reset') {
+      resetPasswordForm.classList.remove('hidden');
     }
   }
 
@@ -1495,13 +1607,116 @@
   }
   
   function switchToRegister() { 
-    if (loginForm) loginForm.classList.add('hidden'); 
-    if (registerForm) registerForm.classList.remove('hidden'); 
+    openModal('register');
   }
   
   function switchToLogin() { 
-    if (registerForm) registerForm.classList.add('hidden'); 
-    if (loginForm) loginForm.classList.remove('hidden'); 
+    openModal('login');
+  }
+
+  function showForgotPassword() {
+    openModal('forgot');
+  }
+
+  // ========== FORGOT PASSWORD FUNCTIONS ==========
+  async function requestPasswordReset() {
+    const email = document.getElementById('resetEmail').value;
+    
+    if (!email) {
+      alert('please enter your email ✧');
+      return;
+    }
+    
+    try {
+      const response = await fetch(API_URL + '/api/auth/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      
+      const data = await response.json();
+      
+      alert('📧 If your email exists, you will receive a reset link');
+      
+      setTimeout(() => {
+        switchToLogin();
+      }, 3000);
+      
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  }
+
+  function checkForResetToken() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    
+    if (token) {
+      fetch(API_URL + '/api/auth/verify-reset-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.valid) {
+          openModal('reset');
+          resetToken = token;
+        } else {
+          alert('Invalid or expired reset link');
+        }
+      })
+      .catch(err => {
+        console.error('Error verifying token:', err);
+      });
+    }
+  }
+
+  async function resetPassword() {
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmNewPassword').value;
+    
+    if (!newPassword || !confirmPassword) {
+      alert('please fill all fields ✧');
+      return;
+    }
+    
+    if (newPassword !== confirmPassword) {
+      alert('passwords don\'t match ✧');
+      return;
+    }
+    
+    if (newPassword.length < 6) {
+      alert('password must be at least 6 characters ✧');
+      return;
+    }
+    
+    try {
+      const response = await fetch(API_URL + '/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          token: resetToken,
+          newPassword 
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error);
+      }
+      
+      alert('✅ password reset successful! you can now log in');
+      
+      resetToken = null;
+      switchToLogin();
+      
+      window.history.replaceState({}, document.title, '/');
+      
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   }
 
   // ========== AUTH FUNCTIONS ==========
@@ -1688,85 +1903,88 @@
   }
 
   async function viewCapsule(id) {
-  try {
-    const response = await fetchWithAuth('/api/capsules/' + id);
-    
-    if (!response.ok) {
-      throw new Error('Failed to load capsule');
+    try {
+      const response = await fetchWithAuth('/api/capsules/' + id);
+      
+      if (!response.ok) {
+        throw new Error('Failed to load capsule');
+      }
+      
+      const capsule = await response.json();
+      console.log('Opened capsule:', capsule);
+      
+      const detailView = document.getElementById('capsuleDetailView');
+      const gridView = document.getElementById('capsuleGridView');
+      const detailContent = document.getElementById('capsuleDetailContent');
+      
+      if (!detailView || !gridView || !detailContent) return;
+      
+      const letter = capsule.letter || '📝 no letter written';
+      const secret = capsule.secret || '🤫 no secret shared';
+      const feeling = capsule.feeling || '💭 not specified';
+      const rating = capsule.rating || 0;
+      const song = capsule.song || '🎵 no song added';
+      const photoUrls = capsule.photo_urls || [];
+      
+      const stars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
+      const openDate = new Date(capsule.open_date);
+      const formattedDate = openDate.toLocaleDateString();
+      
+      // Create photo gallery HTML
+      let photosHTML = '';
+      if (photoUrls.length > 0) {
+        photosHTML = '<div class="photo-gallery">';
+        photoUrls.forEach(url => {
+          photosHTML += `<img src="${API_URL + url}" alt="Capsule memory">`;
+        });
+        photosHTML += '</div>';
+      }
+      
+      detailContent.innerHTML = `
+        <div class="capsule-detail">
+          <h2 style="font-family: 'Baloo 2'; font-size: 2rem; margin-bottom: 0.5rem;">${capsule.title}</h2>
+          <p style="margin-bottom: 1.5rem;"><i class="fas fa-calendar"></i> opened on ${formattedDate}</p>
+          
+          ${photosHTML}
+          
+          <div class="secret-content" style="margin-bottom: 1.5rem;">
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
+              <i class="fas fa-envelope" style="color: #b07a9a;"></i> letter
+            </h3>
+            <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${letter}</p>
+          </div>
+          
+          <div class="secret-content" style="margin-bottom: 1.5rem;">
+            <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
+              <i class="fas fa-mask" style="color: #b07a9a;"></i> secret
+            </h3>
+            <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${secret}</p>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; padding: 1rem; background: rgba(255,235,245,0.3); border-radius: 20px;">
+            <div style="text-align: center;">
+              <i class="fas fa-heart" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+              <div>${feeling}</div>
+            </div>
+            <div style="text-align: center;">
+              <i class="fas fa-star" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+              <div>${stars}</div>
+            </div>
+            <div style="text-align: center;">
+              <i class="fas fa-music" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+              <div>${song}</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      gridView.classList.add('hidden');
+      detailView.classList.remove('hidden');
+      
+    } catch (error) {
+      alert('Error: ' + error.message);
     }
-    
-    const capsule = await response.json();
-    console.log('Opened capsule:', capsule);
-    
-    const detailView = document.getElementById('capsuleDetailView');
-    const gridView = document.getElementById('capsuleGridView');
-    const detailContent = document.getElementById('capsuleDetailContent');
-    
-    if (!detailView || !gridView || !detailContent) return;
-    
-    // Format the content with proper fallbacks
-    const letter = capsule.letter || '📝 no letter written';
-    const secret = capsule.secret || '🤫 no secret shared';
-    const feeling = capsule.feeling || '💭 not specified';
-    const rating = capsule.rating || 0;
-    const song = capsule.song || '🎵 no song added';
-    
-    // Create star display
-    const stars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
-    
-    // Format date
-    const openDate = new Date(capsule.open_date);
-    const formattedDate = openDate.toLocaleDateString();
-    
-    detailContent.innerHTML = `
-      <div class="capsule-detail">
-        <h2 style="font-family: 'Baloo 2'; font-size: 2rem; margin-bottom: 0.5rem;">${capsule.title}</h2>
-        <p style="margin-bottom: 1.5rem;"><i class="fas fa-calendar"></i> opened on ${formattedDate}</p>
-        
-        ${capsule.photo_url ? `
-          <div style="text-align: center; margin: 1rem 0 2rem;">
-            <img src="${API_URL + capsule.photo_url}" alt="Capsule memory" style="max-width: 100%; max-height: 300px; border-radius: 20px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-          </div>
-        ` : ''}
-        
-        <div class="secret-content" style="margin-bottom: 1.5rem;">
-          <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
-            <i class="fas fa-envelope" style="color: #b07a9a;"></i> letter
-          </h3>
-          <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${letter}</p>
-        </div>
-        
-        <div class="secret-content" style="margin-bottom: 1.5rem;">
-          <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
-            <i class="fas fa-mask" style="color: #b07a9a;"></i> secret
-          </h3>
-          <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${secret}</p>
-        </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; padding: 1rem; background: rgba(255,235,245,0.3); border-radius: 20px;">
-          <div style="text-align: center;">
-            <i class="fas fa-heart" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
-            <div>${feeling}</div>
-          </div>
-          <div style="text-align: center;">
-            <i class="fas fa-star" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
-            <div>${stars}</div>
-          </div>
-          <div style="text-align: center;">
-            <i class="fas fa-music" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
-            <div>${song}</div>
-          </div>
-        </div>
-      </div>
-    `;
-    
-    gridView.classList.add('hidden');
-    detailView.classList.remove('hidden');
-    
-  } catch (error) {
-    alert('Error: ' + error.message);
   }
-}
 
   function backToGrid() {
     const detailView = document.getElementById('capsuleDetailView');
@@ -1785,22 +2003,14 @@
     if (capsuleDetailView) capsuleDetailView.classList.add('hidden');
     if (createCapsuleView) createCapsuleView.classList.remove('hidden');
     
-    // Reset form
-    const nameInput = document.getElementById('capsuleName');
-    const dateInput = document.getElementById('capsuleOpenDate');
-    const letterInput = document.getElementById('capsuleLetter');
-    const secretInput = document.getElementById('capsuleSecret');
-    const feelingSelect = document.getElementById('capsuleFeeling');
-    const songInput = document.getElementById('capsuleSong');
-    const photoInput = document.getElementById('photoUpload');
-    
-    if (nameInput) nameInput.value = '';
-    if (dateInput) dateInput.value = '';
-    if (letterInput) letterInput.value = '';
-    if (secretInput) secretInput.value = '';
-    if (feelingSelect) feelingSelect.value = 'happy';
-    if (songInput) songInput.value = '';
-    if (photoInput) photoInput.value = '';
+    document.getElementById('capsuleName').value = '';
+    document.getElementById('capsuleOpenDate').value = '';
+    document.getElementById('capsuleLetter').value = '';
+    document.getElementById('capsuleSecret').value = '';
+    document.getElementById('capsuleFeeling').value = 'happy';
+    document.getElementById('capsuleSong').value = '';
+    document.getElementById('photoUpload').value = '';
+    document.getElementById('photoPreview').innerHTML = '';
     
     currentRating = 0;
     updateRatingStars();
@@ -1823,6 +2033,41 @@
     });
   }
 
+  // ========== MULTIPLE PHOTO UPLOAD ==========
+  document.getElementById('photoUpload')?.addEventListener('change', function(e) {
+    const preview = document.getElementById('photoPreview');
+    preview.innerHTML = '';
+    
+    if (e.target.files.length > 10) {
+      alert('⚠️ maximum 10 photos allowed');
+      e.target.value = '';
+      return;
+    }
+    
+    for (let i = 0; i < e.target.files.length; i++) {
+      const file = e.target.files[i];
+      
+      if (file.size > 5 * 1024 * 1024) {
+        alert(`⚠️ ${file.name} is too large (max 5MB)`);
+        continue;
+      }
+      
+      const reader = new FileReader();
+      
+      reader.onload = function(ev) {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        preview.appendChild(img);
+      }
+      
+      reader.readAsDataURL(file);
+    }
+    
+    if (e.target.files.length > 0) {
+      alert(`📸 ${e.target.files.length} photo(s) selected`);
+    }
+  });
+
   async function saveCapsule() {
     const title = document.getElementById('capsuleName')?.value;
     const openDate = document.getElementById('capsuleOpenDate')?.value;
@@ -1830,7 +2075,7 @@
     const secret = document.getElementById('capsuleSecret')?.value;
     const feeling = document.getElementById('capsuleFeeling')?.value;
     const song = document.getElementById('capsuleSong')?.value;
-    const photoFile = document.getElementById('photoUpload')?.files[0];
+    const photoFiles = document.getElementById('photoUpload')?.files;
     
     if (!title || !openDate) {
       alert('please enter a title and open date ✧');
@@ -1846,8 +2091,8 @@
     formData.append('rating', currentRating);
     formData.append('song', song || '');
     
-    if (photoFile) {
-      formData.append('photo', photoFile);
+    for (let i = 0; i < photoFiles.length; i++) {
+      formData.append('photos', photoFiles[i]);
     }
     
     try {
@@ -1921,10 +2166,8 @@
   }
 
   function startPeriodicChecks() {
-    // Check for opened capsules immediately
     checkForOpenedCapsules();
     
-    // Then check every 30 seconds
     if (notificationCheckInterval) clearInterval(notificationCheckInterval);
     notificationCheckInterval = setInterval(checkForOpenedCapsules, 30000);
   }
@@ -1964,16 +2207,7 @@
   // ========== INITIALIZATION ==========
   document.addEventListener('DOMContentLoaded', () => {
     checkAutoLogin();
-    
-    // Photo upload preview
-    const photoInput = document.getElementById('photoUpload');
-    if (photoInput) {
-      photoInput.addEventListener('change', function(e) {
-        if (e.target.files[0]) {
-          alert('📸 photo ready for upload!');
-        }
-      });
-    }
+    checkForResetToken();
     
     // Initialize rating stars observer
     const observer = new MutationObserver((mutations) => {

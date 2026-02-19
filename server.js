@@ -7,10 +7,13 @@ const multer = require('multer');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 const JWT_SECRET = process.env.JWT_SECRET || 'cloudy-grunge-capsule-secret';
+const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
 
 // Middleware
 app.use(cors());
@@ -22,7 +25,41 @@ if (!fs.existsSync('uploads')) {
   fs.mkdirSync('uploads');
 }
 
-// ==================== MULTER SETUP ====================
+// ==================== EMAIL SETUP (for forgot password) ====================
+// For testing, use ethereal.email (fake email service)
+// In production, use real email service like Gmail, SendGrid, etc.
+let transporter;
+
+// Create test account for development
+if (process.env.NODE_ENV !== 'production') {
+  nodemailer.createTestAccount((err, account) => {
+    if (err) {
+      console.error('Failed to create test email account:', err);
+    } else {
+      transporter = nodemailer.createTransport({
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
+        auth: {
+          user: account.user,
+          pass: account.pass
+        }
+      });
+      console.log('✅ Test email account created. Preview URL: ' + account.web);
+    }
+  });
+} else {
+  // Production email config - replace with your email service
+  transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS
+    }
+  });
+}
+
+// ==================== MULTER SETUP (MULTIPLE PHOTOS) ====================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -42,10 +79,11 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
+// Updated to handle multiple files (up to 10)
 const upload = multer({ 
   storage: storage,
   fileFilter: fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }
+  limits: { fileSize: 5 * 1024 * 1024 } // 5MB per file
 });
 
 // ==================== DATABASE SETUP ====================
@@ -58,6 +96,8 @@ db.serialize(() => {
     username TEXT UNIQUE NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
+    reset_token TEXT,
+    reset_token_expiry DATETIME,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
@@ -71,7 +111,7 @@ db.serialize(() => {
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
   )`);
 
-  // Contents table
+  // Contents table - modified to store multiple photo URLs as JSON
   db.run(`CREATE TABLE IF NOT EXISTS contents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     capsule_id INTEGER UNIQUE NOT NULL,
@@ -80,7 +120,7 @@ db.serialize(() => {
     feeling TEXT,
     rating INTEGER DEFAULT 0,
     song TEXT,
-    photo_url TEXT,
+    photo_urls TEXT, -- JSON array of photo URLs
     FOREIGN KEY(capsule_id) REFERENCES capsules(id) ON DELETE CASCADE
   )`);
 
@@ -209,12 +249,159 @@ app.get('/api/auth/me', authenticateToken, (req, res) => {
   );
 });
 
-// ==================== CAPSULE ROUTES ====================
+// ==================== FORGOT PASSWORD ROUTES ====================
+
+// Request password reset
+app.post('/api/auth/forgot-password', (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ error: 'Email required' });
+  }
+
+  db.get('SELECT id, username FROM users WHERE email = ?', [email], (err, user) => {
+    if (err) {
+      return res.status(500).json({ error: 'Database error' });
+    }
+
+    if (!user) {
+      // Don't reveal that user doesn't exist (security)
+      return res.json({ message: 'If your email exists, you will receive a reset link' });
+    }
+
+    // Generate reset token
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const tokenExpiry = new Date(Date.now() + 3600000); // 1 hour from now
+
+    db.run(
+      'UPDATE users SET reset_token = ?, reset_token_expiry = ? WHERE id = ?',
+      [resetToken, tokenExpiry.toISOString(), user.id],
+      async (err) => {
+        if (err) {
+          return res.status(500).json({ error: 'Failed to generate reset token' });
+        }
+
+        // Create reset link
+        const resetLink = `${FRONTEND_URL}/reset-password?token=${resetToken}`;
+
+        // Send email
+        try {
+          const mailOptions = {
+            from: '"Cloud Capsule" <noreply@cloudcapsule.com>',
+            to: email,
+            subject: 'Reset Your Cloud Capsule Password',
+            html: `
+              <div style="font-family: 'Baloo 2', cursive; max-width: 500px; margin: 0 auto; padding: 20px; background: linear-gradient(145deg, #ffd9e8, #ffe0f0); border-radius: 30px; border: 3px solid white;">
+                <h1 style="color: #3a1a32; text-align: center;">☁️ Cloud Capsule</h1>
+                <p style="color: #552a45; font-size: 1.1rem;">Hello ${user.username},</p>
+                <p style="color: #552a45;">We received a request to reset your password. Click the button below to create a new password:</p>
+                <div style="text-align: center; margin: 30px 0;">
+                  <a href="${resetLink}" style="background: #b07a9a; color: white; padding: 12px 30px; text-decoration: none; border-radius: 50px; font-weight: bold; border: 2px solid white; display: inline-block;">Reset Password</a>
+                </div>
+                <p style="color: #552a45; font-size: 0.9rem;">This link will expire in 1 hour.</p>
+                <p style="color: #552a45; font-size: 0.9rem;">If you didn't request this, please ignore this email.</p>
+                <p style="color: #552a45; margin-top: 20px;">✨ Your memories are safe in the clouds</p>
+              </div>
+            `
+          };
+
+          if (transporter) {
+            const info = await transporter.sendMail(mailOptions);
+            console.log('Reset email sent:', info.messageId);
+            if (info.previewURL) {
+              console.log('Preview URL:', info.previewURL);
+            }
+          } else {
+            // For development, log the reset link
+            console.log('RESET LINK (copy to browser):', resetLink);
+          }
+
+          res.json({ message: 'If your email exists, you will receive a reset link' });
+        } catch (emailErr) {
+          console.error('Email error:', emailErr);
+          res.json({ message: 'If your email exists, you will receive a reset link' });
+        }
+      }
+    );
+  });
+});
+
+// Verify reset token
+app.post('/api/auth/verify-reset-token', (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ error: 'Token required' });
+  }
+
+  db.get(
+    'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > datetime("now")',
+    [token],
+    (err, user) => {
+      if (err) {
+        return res.status(500).json({ error: 'Database error' });
+      }
+
+      if (!user) {
+        return res.status(400).json({ error: 'Invalid or expired token' });
+      }
+
+      res.json({ valid: true });
+    }
+  );
+});
+
+// Reset password
+app.post('/api/auth/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  if (!token || !newPassword) {
+    return res.status(400).json({ error: 'Token and new password required' });
+  }
+
+  if (newPassword.length < 6) {
+    return res.status(400).json({ error: 'Password must be at least 6 characters' });
+  }
+
+  try {
+    db.get(
+      'SELECT id FROM users WHERE reset_token = ? AND reset_token_expiry > datetime("now")',
+      [token],
+      async (err, user) => {
+        if (err) {
+          return res.status(500).json({ error: 'Database error' });
+        }
+
+        if (!user) {
+          return res.status(400).json({ error: 'Invalid or expired token' });
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+        db.run(
+          'UPDATE users SET password = ?, reset_token = NULL, reset_token_expiry = NULL WHERE id = ?',
+          [hashedPassword, user.id],
+          (err) => {
+            if (err) {
+              return res.status(500).json({ error: 'Failed to reset password' });
+            }
+
+            res.json({ message: 'Password reset successful' });
+          }
+        );
+      }
+    );
+  } catch (error) {
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+// ==================== CAPSULE ROUTES (UPDATED FOR MULTIPLE PHOTOS) ====================
 
 // Get all capsules for user
 app.get('/api/capsules', authenticateToken, (req, res) => {
   db.all(
-    `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_url,
+    `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_urls,
      (CASE WHEN datetime(c.open_date) <= datetime('now') THEN 1 ELSE 0 END) as is_open
      FROM capsules c
      LEFT JOIN contents ct ON c.id = ct.capsule_id
@@ -225,15 +412,26 @@ app.get('/api/capsules', authenticateToken, (req, res) => {
       if (err) {
         return res.status(500).json({ error: 'Failed to fetch capsules' });
       }
-      res.json(capsules);
+
+      // Parse photo_urls from JSON string to array
+      const processed = capsules.map(cap => ({
+        ...cap,
+        photo_urls: cap.photo_urls ? JSON.parse(cap.photo_urls) : []
+      }));
+
+      res.json(processed);
     }
   );
 });
 
-// Create new capsule
-app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) => {
+// Create new capsule (with multiple photos)
+app.post('/api/capsules', authenticateToken, upload.array('photos', 10), (req, res) => {
   const { title, open_date, letter, secret, feeling, rating, song } = req.body;
-  const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
+  const files = req.files;
+  
+  // Create array of photo URLs
+  const photoUrls = files ? files.map(f => `/uploads/${f.filename}`) : [];
+  const photoUrlsJson = JSON.stringify(photoUrls);
 
   if (!title || !open_date) {
     return res.status(400).json({ error: 'Title and open date are required' });
@@ -254,9 +452,9 @@ app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) 
         const capsuleId = this.lastID;
 
         db.run(
-          `INSERT INTO contents (capsule_id, letter, secret, feeling, rating, song, photo_url)
+          `INSERT INTO contents (capsule_id, letter, secret, feeling, rating, song, photo_urls)
            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [capsuleId, letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photo_url],
+          [capsuleId, letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photoUrlsJson],
           function(err) {
             if (err) {
               db.run('ROLLBACK');
@@ -266,7 +464,8 @@ app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) 
             db.run('COMMIT');
             res.status(201).json({ 
               message: 'Capsule created successfully',
-              id: capsuleId 
+              id: capsuleId,
+              photoCount: photoUrls.length
             });
           }
         );
@@ -275,12 +474,12 @@ app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) 
   });
 });
 
-// Get single capsule - FIXED VERSION
+// Get single capsule
 app.get('/api/capsules/:id', authenticateToken, (req, res) => {
   const capsuleId = req.params.id;
 
   db.get(
-    `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_url,
+    `SELECT c.*, ct.letter, ct.secret, ct.feeling, ct.rating, ct.song, ct.photo_urls,
      (CASE WHEN datetime(c.open_date) <= datetime('now') THEN 1 ELSE 0 END) as is_open
      FROM capsules c
      LEFT JOIN contents ct ON c.id = ct.capsule_id
@@ -295,6 +494,9 @@ app.get('/api/capsules/:id', authenticateToken, (req, res) => {
       if (!capsule) {
         return res.status(404).json({ error: 'Capsule not found' });
       }
+
+      // Parse photo URLs
+      const photoUrls = capsule.photo_urls ? JSON.parse(capsule.photo_urls) : [];
 
       // Check if capsule is open
       const now = new Date();
@@ -315,7 +517,7 @@ app.get('/api/capsules/:id', authenticateToken, (req, res) => {
           feeling: null,
           rating: null,
           song: null,
-          photo_url: null
+          photo_urls: []
         });
       }
 
@@ -332,18 +534,18 @@ app.get('/api/capsules/:id', authenticateToken, (req, res) => {
         feeling: capsule.feeling || 'happy',
         rating: capsule.rating || 0,
         song: capsule.song || '',
-        photo_url: capsule.photo_url || null
+        photo_urls: photoUrls
       });
     }
   );
 });
 
 // Update capsule
-app.put('/api/capsules/:id', authenticateToken, upload.single('photo'), (req, res) => {
+app.put('/api/capsules/:id', authenticateToken, upload.array('photos', 10), (req, res) => {
   const capsuleId = req.params.id;
   const { title, open_date, letter, secret, feeling, rating, song } = req.body;
-  const photo_url = req.file ? `/uploads/${req.file.filename}` : null;
-
+  const files = req.files;
+  
   db.get(
     'SELECT * FROM capsules WHERE id = ? AND user_id = ?',
     [capsuleId, req.user.id],
@@ -371,21 +573,40 @@ app.put('/api/capsules/:id', authenticateToken, upload.single('photo'), (req, re
               return res.status(500).json({ error: 'Failed to update capsule' });
             }
 
-            db.run(
-              `UPDATE contents SET letter = ?, secret = ?, feeling = ?, rating = ?, song = ?${photo_url ? ', photo_url = ?' : ''} WHERE capsule_id = ?`,
-              photo_url 
-                ? [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photo_url, capsuleId]
-                : [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', capsuleId],
-              function(err) {
-                if (err) {
-                  db.run('ROLLBACK');
-                  return res.status(500).json({ error: 'Failed to update contents' });
-                }
-
-                db.run('COMMIT');
-                res.json({ message: 'Capsule updated successfully' });
+            // Handle photos
+            db.get('SELECT photo_urls FROM contents WHERE capsule_id = ?', [capsuleId], (err, row) => {
+              if (err) {
+                db.run('ROLLBACK');
+                return res.status(500).json({ error: 'Database error' });
               }
-            );
+
+              let existingPhotos = [];
+              if (row && row.photo_urls) {
+                existingPhotos = JSON.parse(row.photo_urls);
+              }
+
+              // Add new photos
+              const newPhotos = files ? files.map(f => `/uploads/${f.filename}`) : [];
+              const allPhotos = [...existingPhotos, ...newPhotos];
+              const photoUrlsJson = JSON.stringify(allPhotos);
+
+              db.run(
+                `UPDATE contents SET letter = ?, secret = ?, feeling = ?, rating = ?, song = ?, photo_urls = ? WHERE capsule_id = ?`,
+                [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photoUrlsJson, capsuleId],
+                function(err) {
+                  if (err) {
+                    db.run('ROLLBACK');
+                    return res.status(500).json({ error: 'Failed to update contents' });
+                  }
+
+                  db.run('COMMIT');
+                  res.json({ 
+                    message: 'Capsule updated successfully',
+                    photoCount: allPhotos.length
+                  });
+                }
+              );
+            });
           }
         );
       });
@@ -437,11 +658,18 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'capsule.html'));
 });
 
+app.get('/reset-password', (req, res) => {
+  res.sendFile(path.join(__dirname, 'capsule.html'));
+});
+
 // ==================== ERROR HANDLING ====================
 app.use((err, req, res, next) => {
   if (err instanceof multer.MulterError) {
     if (err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(400).json({ error: 'File too large. Max size is 5MB' });
+      return res.status(400).json({ error: 'File too large. Max size is 5MB per file' });
+    }
+    if (err.code === 'LIMIT_FILE_COUNT') {
+      return res.status(400).json({ error: 'Too many files. Max 10 photos allowed' });
     }
     return res.status(400).json({ error: err.message });
   }
@@ -453,4 +681,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`☁️ Cloud Capsule server running on port ${PORT}`);
   console.log(`📍 Local: http://localhost:${PORT}`);
+  console.log(`📁 Uploads folder: ${path.join(__dirname, 'uploads')}`);
+  console.log(`💾 Database: ${path.join(__dirname, 'capsule.db')}`);
 });
