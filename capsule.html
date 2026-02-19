@@ -38,14 +38,14 @@
       background: linear-gradient(145deg, #1E2E4F 0%, #253b5e 50%, #31487A 100%);
     }
 
-    /* === CLOUDS BACKGROUND - JUST A FEW, NATURAL === */
+    /* === CLOUDS BACKGROUND - NON-BLOCKING === */
     .clouds-background {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      pointer-events: none;
+      pointer-events: none !important;
       z-index: 1;
       overflow: hidden;
     }
@@ -56,12 +56,14 @@
       backdrop-filter: blur(3px);
       opacity: 0.6;
       will-change: transform;
+      pointer-events: none;
     }
 
     .cloud::before, .cloud::after {
       content: '';
       position: absolute;
       border-radius: 50%;
+      pointer-events: none;
     }
 
     .cloud::before {
@@ -78,7 +80,7 @@
       right: 8%;
     }
 
-    /* LIGHT MODE CLOUDS - WHITE WITH PINK GLOW */
+    /* LIGHT MODE CLOUDS */
     body:not(.dark-mode) .cloud {
       background: rgba(255, 255, 255, 0.8);
       box-shadow: 0 20px 40px rgba(255, 150, 200, 0.2);
@@ -89,7 +91,7 @@
       background: rgba(255, 255, 255, 0.8);
     }
 
-    /* DARK MODE CLOUDS - SUBTLE BLUE */
+    /* DARK MODE CLOUDS */
     body.dark-mode .cloud {
       background: rgba(180, 200, 255, 0.1);
       box-shadow: 0 20px 40px rgba(0, 20, 40, 0.2);
@@ -100,7 +102,7 @@
       background: rgba(180, 200, 255, 0.1);
     }
 
-    /* SLOW, LAZY FLOATING */
+    /* CLOUD ANIMATIONS */
     @keyframes floatSlowly {
       0% { transform: translateX(-10vw) translateY(0); }
       50% { transform: translateX(40vw) translateY(-20px); }
@@ -113,61 +115,20 @@
       100% { transform: translateX(110vw) translateY(-10px); }
     }
 
-    /* JUST 6 CLOUDS - NICE AND SPACIOUS */
-    .cloud1 { 
-      width: 320px; 
-      height: 115px; 
-      top: 15%; 
-      left: -5%; 
-      animation: floatSlowly 95s linear infinite; 
-    }
-    
-    .cloud2 { 
-      width: 280px; 
-      height: 100px; 
-      top: 40%; 
-      left: 20%; 
-      animation: floatEvenSlower 120s linear infinite; 
-    }
-    
-    .cloud3 { 
-      width: 360px; 
-      height: 130px; 
-      top: 70%; 
-      left: 45%; 
-      animation: floatSlowly 140s linear infinite; 
-    }
-    
-    .cloud4 { 
-      width: 240px; 
-      height: 85px; 
-      top: 25%; 
-      left: 70%; 
-      animation: floatEvenSlower 110s linear infinite; 
-    }
-    
-    .cloud5 { 
-      width: 300px; 
-      height: 110px; 
-      top: 55%; 
-      left: -10%; 
-      animation: floatSlowly 130s linear infinite; 
-    }
-    
-    .cloud6 { 
-      width: 260px; 
-      height: 95px; 
-      top: 85%; 
-      left: 30%; 
-      animation: floatEvenSlower 150s linear infinite; 
-    }
+    /* 6 CLOUDS */
+    .cloud1 { width: 320px; height: 115px; top: 15%; left: -5%; animation: floatSlowly 95s linear infinite; }
+    .cloud2 { width: 280px; height: 100px; top: 40%; left: 20%; animation: floatEvenSlower 120s linear infinite; }
+    .cloud3 { width: 360px; height: 130px; top: 70%; left: 45%; animation: floatSlowly 140s linear infinite; }
+    .cloud4 { width: 240px; height: 85px; top: 25%; left: 70%; animation: floatEvenSlower 110s linear infinite; }
+    .cloud5 { width: 300px; height: 110px; top: 55%; left: -10%; animation: floatSlowly 130s linear infinite; }
+    .cloud6 { width: 260px; height: 95px; top: 85%; left: 30%; animation: floatEvenSlower 150s linear infinite; }
 
-    /* === NOTIFICATION SYSTEM - BOTTOM LEFT === */
+    /* === NOTIFICATION CONTAINER - CLICKABLE === */
     .notification-container {
       position: fixed;
       bottom: 20px;
       left: 20px;
-      z-index: 1000;
+      z-index: 9999;
       display: flex;
       flex-direction: column;
       gap: 10px;
@@ -187,9 +148,19 @@
       align-items: center;
       gap: 12px;
       min-width: 280px;
+      max-width: 350px;
       transform: translateX(-120%);
-      animation: slideIn 0.5s forwards, fadeOut 0.5s forwards 4.5s;
-      pointer-events: none;
+      animation: slideIn 0.5s forwards;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      pointer-events: auto;
+      position: relative;
+      z-index: 10000;
+    }
+
+    .notification:hover {
+      transform: scale(1.02) translateX(5px);
+      box-shadow: 0 8px 0 #b07a9a, 0 15px 25px rgba(0, 0, 0, 0.15);
     }
 
     body.dark-mode .notification {
@@ -199,12 +170,12 @@
       box-shadow: 0 5px 0 #0f1a2a, 0 10px 20px rgba(0, 0, 0, 0.3);
     }
 
-    @keyframes slideIn {
-      to { transform: translateX(0); }
+    body.dark-mode .notification:hover {
+      box-shadow: 0 8px 0 #0f1a2a, 0 15px 25px rgba(0, 0, 0, 0.4);
     }
 
-    @keyframes fadeOut {
-      to { opacity: 0; transform: translateX(-20px); }
+    @keyframes slideIn {
+      to { transform: translateX(0); }
     }
 
     .notification i {
@@ -231,7 +202,7 @@
       opacity: 0.8;
     }
 
-    /* === MAIN CONTENT - PERFECTLY CENTERED === */
+    /* === MAIN CONTENT - CLICKABLE === */
     .homepage {
       position: relative;
       z-index: 10;
@@ -243,9 +214,14 @@
       justify-content: center;
       text-align: center;
       padding: 0 1rem;
+      pointer-events: none;
     }
 
-    /* === TITLE - TWO LINES, PERFECT CENTERING === */
+    .homepage * {
+      pointer-events: auto;
+    }
+
+    /* === TITLE === */
     .hero-title {
       font-family: 'Baloo 2', cursive;
       font-size: clamp(3.2rem, 11vw, 6rem);
@@ -278,7 +254,7 @@
       50% { transform: scale(1.02) translateY(-5px); }
     }
 
-    /* === PUNCHLINE - MUCH SMALLER NOW === */
+    /* === PUNCHLINE === */
     .punchline {
       font-family: 'Baloo 2', cursive;
       font-size: clamp(0.8rem, 2.5vw, 1.1rem);
@@ -301,7 +277,7 @@
       border-color: #4a6080;
     }
 
-    /* === BUTTON CONTAINER - PERFECT SPACING === */
+    /* === BUTTON CONTAINER === */
     .button-container {
       display: flex;
       flex-direction: column;
@@ -312,7 +288,7 @@
       max-width: 280px;
     }
 
-    /* GET STARTED - MAIN ATTRACTION */
+    /* GET STARTED BUTTON */
     .home-btn.get-started {
       background: rgba(255, 235, 245, 0.98);
       border: 4px solid white;
@@ -348,13 +324,7 @@
       box-shadow: 0 8px 0 #0f1a2a, 0 15px 30px rgba(0, 0, 0, 0.5);
     }
 
-    body.dark-mode .home-btn.get-started:hover {
-      background: linear-gradient(145deg, #3a558a, #253b5e);
-      border-color: #5a7090 #1a2a3a #1a2a3a #5a7090;
-      box-shadow: 0 8px 0 #0a1522;
-    }
-
-    /* LOGIN - DELICATE AND SMALL */
+    /* LOGIN BUTTON */
     .home-btn.login {
       background: rgba(255, 235, 245, 0.85);
       border: 3px solid white;
@@ -390,38 +360,7 @@
       box-shadow: 0 4px 0 #0f1a2a, 0 8px 15px rgba(0, 0, 0, 0.4);
     }
 
-    body.dark-mode .home-btn.login:hover {
-      background: linear-gradient(145deg, #32486a, #253b5e);
-      border-color: #4a6080 #1a2a3a #1a2a3a #4a6080;
-      box-shadow: 0 4px 0 #0a1522;
-    }
-
-    .home-btn.get-started i {
-      font-size: clamp(1.3rem, 4vw, 1.6rem);
-      color: #b86a98;
-    }
-
-    .home-btn.login i {
-      font-size: clamp(0.8rem, 2.5vw, 1.1rem);
-      color: #b86a98;
-    }
-
-    body.dark-mode .home-btn.get-started i,
-    body.dark-mode .home-btn.login i {
-      color: #a0c0ff;
-    }
-
-    .home-btn.get-started:active {
-      transform: translateY(8px);
-      box-shadow: 0 3px 0 #b07a9a;
-    }
-
-    .home-btn.login:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #b07a9a;
-    }
-
-    /* === WELCOME MESSAGE - SOFT AND LOW === */
+    /* === WELCOME MESSAGE === */
     .welcome-message {
       font-size: clamp(0.7rem, 2vw, 0.9rem);
       color: #552a45;
@@ -442,12 +381,7 @@
       border-color: #4a6080;
     }
 
-    .welcome-message i {
-      font-size: 0.7rem;
-      opacity: 0.7;
-    }
-
-    /* === TOP BUTTONS - DYNAMIC POSITIONING === */
+    /* === TOP BUTTONS - CLICKABLE === */
     .top-buttons {
       position: fixed;
       top: 15px;
@@ -456,6 +390,7 @@
       display: flex;
       gap: 10px;
       align-items: center;
+      pointer-events: auto;
     }
 
     .about-btn, .dark-toggle {
@@ -474,6 +409,9 @@
       align-items: center;
       gap: 6px;
       transition: all 0.1s ease;
+      pointer-events: auto;
+      position: relative;
+      z-index: 1001;
     }
 
     .about-btn:hover, .dark-toggle:hover {
@@ -489,18 +427,7 @@
       box-shadow: 0 4px 0 #0f1a2a;
     }
 
-    body.dark-mode .about-btn:hover,
-    body.dark-mode .dark-toggle:hover {
-      background: #253b5e;
-      border-color: #5a7090;
-    }
-
-    .about-btn:active, .dark-toggle:active {
-      transform: translateY(4px);
-      box-shadow: 0 2px 0 #b07a9a;
-    }
-
-    /* === SIGN OUT BUTTON - ALWAYS VISIBLE TOP RIGHT === */
+    /* === SIGN OUT BUTTON - CLICKABLE === */
     .sign-out-btn {
       position: fixed;
       top: 20px;
@@ -520,6 +447,9 @@
       align-items: center;
       gap: 8px;
       transition: all 0.08s ease;
+      pointer-events: auto;
+      position: fixed;
+      z-index: 1001;
     }
 
     body.dark-mode .sign-out-btn {
@@ -538,174 +468,7 @@
       box-shadow: 0 2px 0 #7a4a6a;
     }
 
-    body.dark-mode .sign-out-btn:active {
-      box-shadow: 0 2px 0 #1a2a3a;
-    }
-
-    /* === CAPSULE GRID - SEALED BOXES WITH SQUARES === */
-    .capsule-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 1.5rem;
-      margin: 2rem 0;
-    }
-
-    .capsule-card {
-      background: rgba(255, 235, 245, 0.7);
-      backdrop-filter: blur(10px);
-      border-radius: 30px;
-      padding: 1.5rem;
-      border: 3px solid white;
-      box-shadow: 0 8px 0 #b07a9a;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-
-    body.dark-mode .capsule-card {
-      background: rgba(30, 46, 79, 0.7);
-      border-color: #4a6080;
-      box-shadow: 0 8px 0 #0f1a2a;
-    }
-
-    /* SEALED BOX PATTERN - SQUARES GOING IN */
-    .capsule-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: 
-        repeating-linear-gradient(45deg, 
-          rgba(176, 122, 154, 0.15) 0px, 
-          rgba(176, 122, 154, 0.15) 8px,
-          transparent 8px, 
-          transparent 16px),
-        repeating-linear-gradient(-45deg, 
-          rgba(176, 122, 154, 0.15) 0px, 
-          rgba(176, 122, 154, 0.15) 8px,
-          transparent 8px, 
-          transparent 16px);
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    body.dark-mode .capsule-card::before {
-      background-image: 
-        repeating-linear-gradient(45deg, 
-          rgba(160, 192, 255, 0.15) 0px, 
-          rgba(160, 192, 255, 0.15) 8px,
-          transparent 8px, 
-          transparent 16px),
-        repeating-linear-gradient(-45deg, 
-          rgba(160, 192, 255, 0.15) 0px, 
-          rgba(160, 192, 255, 0.15) 8px,
-          transparent 8px, 
-          transparent 16px);
-    }
-
-    /* EXTRA SQUARES FOR SEALED LOOK */
-    .capsule-card::after {
-      content: '';
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      right: 10px;
-      bottom: 10px;
-      border: 2px dashed rgba(176, 122, 154, 0.3);
-      border-radius: 20px;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    body.dark-mode .capsule-card::after {
-      border-color: rgba(160, 192, 255, 0.3);
-    }
-
-    /* UNLOCKED CAPSULE - SQUARES FADE AWAY */
-    .capsule-card.unlocked::before {
-      opacity: 0.1;
-      transition: opacity 0.5s ease;
-    }
-
-    .capsule-card.unlocked::after {
-      opacity: 0.1;
-      transition: opacity 0.5s ease;
-    }
-
-    .capsule-card.locked {
-      cursor: not-allowed;
-      opacity: 0.9;
-    }
-
-    .capsule-card.locked:hover {
-      transform: scale(1.02);
-      box-shadow: 0 10px 0 #b07a9a;
-    }
-
-    body.dark-mode .capsule-card.locked:hover {
-      box-shadow: 0 10px 0 #0f1a2a;
-    }
-
-    .capsule-card.unlocked {
-      cursor: pointer;
-    }
-
-    .capsule-card.unlocked:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 0 #b07a9a;
-    }
-
-    body.dark-mode .capsule-card.unlocked:hover {
-      box-shadow: 0 12px 0 #0f1a2a;
-    }
-
-    .capsule-icon {
-      font-size: 2.5rem;
-      color: #b07a9a;
-      margin-bottom: 0.5rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    body.dark-mode .capsule-icon {
-      color: #a0c0ff;
-    }
-
-    .capsule-title {
-      font-family: 'Baloo 2', cursive;
-      font-size: 1.3rem;
-      margin-bottom: 0.3rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .capsule-date {
-      font-size: 0.8rem;
-      opacity: 0.7;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .capsule-badge {
-      display: inline-block;
-      padding: 0.2rem 1rem;
-      border-radius: 20px;
-      font-size: 0.7rem;
-      font-weight: bold;
-      background: #b07a9a;
-      color: white;
-      position: relative;
-      z-index: 2;
-    }
-
-    body.dark-mode .capsule-badge {
-      background: #31487A;
-    }
-
-    /* === REST OF THE STYLES (MODAL, ETC) - UNCHANGED === */
+    /* === MODAL OVERLAY - CLICKABLE === */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -714,7 +477,7 @@
       height: 100%;
       background: rgba(0, 0, 0, 0.2);
       backdrop-filter: blur(10px);
-      z-index: 200;
+      z-index: 2000;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -722,11 +485,13 @@
       opacity: 0;
       transition: all 0.3s ease;
       padding: 1rem;
+      pointer-events: none;
     }
 
     .modal-overlay.show {
       visibility: visible;
       opacity: 1;
+      pointer-events: auto;
     }
 
     .modal-card {
@@ -741,6 +506,7 @@
       position: relative;
       transform: scale(0.98);
       transition: transform 0.2s ease;
+      pointer-events: auto;
     }
 
     .modal-overlay.show .modal-card {
@@ -799,10 +565,6 @@
       color: #a0c0ff;
     }
 
-    body.dark-mode .peek-icon:hover {
-      color: #c0e0ff;
-    }
-
     .modal-card input {
       background: rgba(255, 255, 255, 0.95);
       border: 3px solid #ffb5d0;
@@ -818,10 +580,6 @@
       background: #253b5e;
       border-color: #4a6080;
       color: #e8f0ff;
-    }
-
-    body.dark-mode .modal-card input::placeholder {
-      color: #a0b8d0;
     }
 
     .modal-btn {
@@ -852,10 +610,6 @@
       box-shadow: 0 6px 0 #0f1a2a;
     }
 
-    body.dark-mode .modal-btn:hover {
-      background: #3a558a;
-    }
-
     .close-modal {
       position: absolute;
       top: 15px;
@@ -883,10 +637,6 @@
       color: #a0c0ff;
     }
 
-    body.dark-mode .close-modal:hover {
-      background: rgba(30, 46, 79, 0.5);
-    }
-
     .switch-text {
       color: #5a3a4a;
       cursor: pointer;
@@ -904,6 +654,7 @@
       color: #a0c0ff;
     }
 
+    /* === ABOUT MODAL SCROLLABLE === */
     .about-story {
       max-height: 50vh;
       overflow-y: auto;
@@ -958,10 +709,6 @@
       background: rgba(49, 72, 122, 0.2);
     }
 
-    body.dark-mode .story-chapter:hover {
-      background: rgba(49, 72, 122, 0.3);
-    }
-
     .chapter-title {
       font-family: 'Baloo 2', cursive;
       font-size: 1.3rem;
@@ -974,10 +721,6 @@
 
     body.dark-mode .chapter-title {
       color: #a0c0ff;
-    }
-
-    .chapter-title i {
-      font-size: 1.4rem;
     }
 
     .story-text {
@@ -997,15 +740,9 @@
       border-radius: 15px;
       font-style: italic;
       font-size: 0.9rem;
-      color: #3a1a32;
     }
 
-    body.dark-mode .fun-fact {
-      background: rgba(49, 72, 122, 0.2);
-      border-left-color: #4a6080;
-      color: #b0c8ff;
-    }
-
+    /* === MAIN APP DASHBOARD === */
     #mainApp {
       position: relative;
       z-index: 20;
@@ -1015,32 +752,11 @@
       padding: 5rem 1rem 2rem;
       scrollbar-width: thin;
       scrollbar-color: #c07aa0 #ffe5f0;
+      pointer-events: auto;
     }
 
     body.dark-mode #mainApp {
       scrollbar-color: #4a6080 #1E2E4F;
-    }
-
-    #mainApp::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    #mainApp::-webkit-scrollbar-track {
-      background: #ffe5f0;
-      border-radius: 10px;
-    }
-
-    #mainApp::-webkit-scrollbar-thumb {
-      background: #c07aa0;
-      border-radius: 10px;
-    }
-
-    body.dark-mode #mainApp::-webkit-scrollbar-track {
-      background: #1E2E4F;
-    }
-
-    body.dark-mode #mainApp::-webkit-scrollbar-thumb {
-      background: #4a6080;
     }
 
     .dashboard-container {
@@ -1104,6 +820,154 @@
       box-shadow: 0 2px 0 #7a4a6a;
     }
 
+    /* === CAPSULE GRID === */
+    .capsule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .capsule-card {
+      background: rgba(255, 235, 245, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 30px;
+      padding: 1.5rem;
+      border: 3px solid white;
+      box-shadow: 0 8px 0 #b07a9a;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    body.dark-mode .capsule-card {
+      background: rgba(30, 46, 79, 0.7);
+      border-color: #4a6080;
+      box-shadow: 0 8px 0 #0f1a2a;
+    }
+
+    /* SEALED BOX PATTERN */
+    .capsule-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: 
+        repeating-linear-gradient(45deg, 
+          rgba(176, 122, 154, 0.15) 0px, 
+          rgba(176, 122, 154, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px),
+        repeating-linear-gradient(-45deg, 
+          rgba(176, 122, 154, 0.15) 0px, 
+          rgba(176, 122, 154, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body.dark-mode .capsule-card::before {
+      background-image: 
+        repeating-linear-gradient(45deg, 
+          rgba(160, 192, 255, 0.15) 0px, 
+          rgba(160, 192, 255, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px),
+        repeating-linear-gradient(-45deg, 
+          rgba(160, 192, 255, 0.15) 0px, 
+          rgba(160, 192, 255, 0.15) 8px,
+          transparent 8px, 
+          transparent 16px);
+    }
+
+    .capsule-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      border: 2px dashed rgba(176, 122, 154, 0.3);
+      border-radius: 20px;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    body.dark-mode .capsule-card::after {
+      border-color: rgba(160, 192, 255, 0.3);
+    }
+
+    .capsule-card.unlocked::before,
+    .capsule-card.unlocked::after {
+      opacity: 0.1;
+      transition: opacity 0.5s ease;
+    }
+
+    .capsule-card.locked {
+      cursor: not-allowed;
+      opacity: 0.9;
+    }
+
+    .capsule-card.locked:hover {
+      transform: scale(1.02);
+      box-shadow: 0 10px 0 #b07a9a;
+    }
+
+    .capsule-card.unlocked:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 0 #b07a9a;
+    }
+
+    .capsule-icon {
+      font-size: 2.5rem;
+      color: #b07a9a;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    body.dark-mode .capsule-icon {
+      color: #a0c0ff;
+    }
+
+    .capsule-title {
+      font-family: 'Baloo 2', cursive;
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .capsule-date {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    .capsule-badge {
+      display: inline-block;
+      padding: 0.2rem 1rem;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      background: #b07a9a;
+      color: white;
+      position: relative;
+      z-index: 2;
+    }
+
+    body.dark-mode .capsule-badge {
+      background: #31487A;
+    }
+
+    /* === EMPTY STATE === */
     .empty-capsules {
       text-align: center;
       padding: 4rem 2rem;
@@ -1111,6 +975,7 @@
       border-radius: 40px;
       margin: 2rem 0;
       border: 2px dashed #ffb5d0;
+      grid-column: 1 / -1;
     }
 
     body.dark-mode .empty-capsules {
@@ -1136,20 +1001,13 @@
       margin-bottom: 0.5rem;
     }
 
-    body.dark-mode .empty-capsules p {
-      color: #a0c0ff;
-    }
-
     .empty-capsules .sub-note {
       font-size: 1rem;
       opacity: 0.8;
       color: #7a5a6a;
     }
 
-    body.dark-mode .empty-capsules .sub-note {
-      color: #b0c8ff;
-    }
-
+    /* === CAPSULE DETAIL VIEW === */
     .capsule-detail {
       background: rgba(255, 235, 245, 0.7);
       backdrop-filter: blur(10px);
@@ -1173,6 +1031,7 @@
       background: rgba(20, 30, 50, 0.5);
     }
 
+    /* === CREATE CAPSULE FORM === */
     .capsule-form {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -1235,6 +1094,7 @@
       border-color: #4a6080;
     }
 
+    /* === WORKING RATING STARS === */
     .rating-stars {
       display: flex;
       gap: 5px;
@@ -1310,125 +1170,17 @@
     }
 
     @media (max-width: 600px) {
-      .hero-title {
-        font-size: clamp(2.8rem, 9vw, 4.5rem);
-      }
-      .punchline {
-        font-size: 0.8rem;
-      }
-      .button-container {
-        max-width: 240px;
-      }
-      .home-btn.login {
-        width: 75%;
-      }
-      .top-buttons {
-        top: 10px;
-        left: 10px;
-        gap: 5px;
-      }
-      .about-btn, .dark-toggle {
-        padding: 0.4rem 1rem;
-        font-size: 0.8rem;
-      }
-      .chapter-title {
-        font-size: 1.1rem;
-      }
-      .story-text {
-        font-size: 0.85rem;
-      }
-      .capsule-grid {
-        grid-template-columns: 1fr;
-      }
-      .capsule-form {
-        grid-template-columns: 1fr;
-      }
-      .form-actions {
-        flex-direction: column;
-      }
-      .sign-out-btn {
-        top: 10px;
-        right: 10px;
-        padding: 0.4rem 1rem;
-        font-size: 0.8rem;
-      }
+      .hero-title { font-size: clamp(2.8rem, 9vw, 4.5rem); }
+      .punchline { font-size: 0.8rem; }
+      .button-container { max-width: 240px; }
+      .home-btn.login { width: 75%; }
+      .top-buttons { top: 10px; left: 10px; gap: 5px; }
+      .about-btn, .dark-toggle { padding: 0.4rem 1rem; font-size: 0.8rem; }
+      .capsule-grid { grid-template-columns: 1fr; }
+      .capsule-form { grid-template-columns: 1fr; }
+      .form-actions { flex-direction: column; }
+      .sign-out-btn { top: 10px; right: 10px; padding: 0.4rem 1rem; font-size: 0.8rem; }
     }
-/* NOTIFICATION CONTAINER */
-.notification-container {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  z-index: 1000;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  pointer-events: auto;
-}
-
-.notification {
-  background: rgba(255, 235, 245, 0.95);
-  backdrop-filter: blur(10px);
-  border: 3px solid white;
-  border-radius: 30px;
-  padding: 1rem 1.5rem;
-  font-family: 'Baloo 2', cursive;
-  color: #3a1a32;
-  box-shadow: 0 5px 0 #b07a9a, 0 10px 20px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 280px;
-  max-width: 350px;
-  transform: translateX(-120%);
-  animation: slideIn 0.5s forwards;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  pointer-events: auto;
-}
-
-.notification:hover {
-  transform: scale(1.02) translateX(5px);
-  box-shadow: 0 8px 0 #b07a9a, 0 15px 25px rgba(0, 0, 0, 0.15);
-}
-
-body.dark-mode .notification {
-  background: #1E2E4F;
-  color: #e8f0ff;
-  border-color: #4a6080;
-  box-shadow: 0 5px 0 #0f1a2a, 0 10px 20px rgba(0, 0, 0, 0.3);
-}
-
-body.dark-mode .notification:hover {
-  box-shadow: 0 8px 0 #0f1a2a, 0 15px 25px rgba(0, 0, 0, 0.4);
-}
-
-@keyframes slideIn {
-  to { transform: translateX(0); }
-}
-
-.notification i {
-  font-size: 2rem;
-  color: #b07a9a;
-}
-
-body.dark-mode .notification i {
-  color: #a0c0ff;
-}
-
-.notification-content {
-  flex: 1;
-}
-
-.notification-title {
-  font-weight: 700;
-  font-size: 1.1rem;
-  margin-bottom: 0.2rem;
-}
-
-.notification-message {
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
   </style>
 </head>
 <body>
@@ -1436,7 +1188,7 @@ body.dark-mode .notification i {
 <!-- NOTIFICATION CONTAINER - BOTTOM LEFT -->
 <div id="notificationContainer" class="notification-container"></div>
 
-<!-- TOP BUTTONS CONTAINER - ABOUT and DARK TOGGLE TOGETHER -->
+<!-- TOP BUTTONS CONTAINER -->
 <div class="top-buttons">
   <button class="about-btn" onclick="showAboutModal()">
     <i class="fas fa-cloud"></i> ABOUT
@@ -1446,7 +1198,7 @@ body.dark-mode .notification i {
   </button>
 </div>
 
-<!-- FLOATING CLOUDS - JUST 6, NICE AND SPACIOUS -->
+<!-- FLOATING CLOUDS -->
 <div class="clouds-background">
   <div class="cloud cloud1"></div>
   <div class="cloud cloud2"></div>
@@ -1456,7 +1208,7 @@ body.dark-mode .notification i {
   <div class="cloud cloud6"></div>
 </div>
 
-<!-- HOMEPAGE - PERFECTLY CENTERED -->
+<!-- HOMEPAGE -->
 <div id="homepage" class="homepage">
   <h1 class="hero-title">CLOUD<br>CAPSULE</h1>
   <div class="punchline">✦ seal your memories in the clouds ✦</div>
@@ -1473,7 +1225,7 @@ body.dark-mode .notification i {
   </div>
 </div>
 
-<!-- LOGIN/REGISTER MODAL - WITH PASSWORD PEEK -->
+<!-- LOGIN/REGISTER MODAL -->
 <div id="modalOverlay" class="modal-overlay">
   <div class="modal-card">
     <button class="close-modal" onclick="closeModal()"><i class="fas fa-times"></i></button>
@@ -1508,7 +1260,7 @@ body.dark-mode .notification i {
   </div>
 </div>
 
-<!-- ABOUT MODAL - FULL SCROLLABLE STORY -->
+<!-- ABOUT MODAL -->
 <div id="aboutModal" class="modal-overlay">
   <div class="modal-card" style="max-width: 550px;">
     <button class="close-modal" onclick="closeAboutModal()"><i class="fas fa-times"></i></button>
@@ -1588,13 +1340,18 @@ body.dark-mode .notification i {
 </div>
 
 <script>
+  // ========== CONFIGURATION ==========
+  const API_URL = 'http://localhost:3000';
+  
   // ========== STATE MANAGEMENT ==========
   let currentUser = null;
+  let authToken = localStorage.getItem('token');
   let currentRating = 0;
   let capsules = [];
   let checkInterval = null;
+  let notificationCheckInterval = null;
 
-  // ========== DARK MODE TOGGLE WITH DYNAMIC TEXT ==========
+  // ========== DARK MODE TOGGLE ==========
   function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
     const toggleBtn = document.querySelector('.dark-toggle i');
@@ -1603,31 +1360,97 @@ body.dark-mode .notification i {
     if (document.body.classList.contains('dark-mode')) {
       toggleBtn.className = 'fas fa-sun';
       toggleText.textContent = 'LIGHT';
+      localStorage.setItem('darkMode', 'true');
     } else {
       toggleBtn.className = 'fas fa-moon';
       toggleText.textContent = 'DARK';
+      localStorage.setItem('darkMode', 'false');
     }
   }
 
-  // ========== NOTIFICATION SYSTEM ==========
-  function showNotification(title, message, icon = '🎁') {
+  // Load dark mode preference
+  if (localStorage.getItem('darkMode') === 'true') {
+    document.body.classList.add('dark-mode');
+    const toggleBtn = document.querySelector('.dark-toggle i');
+    const toggleText = document.getElementById('darkToggleText');
+    if (toggleBtn) toggleBtn.className = 'fas fa-sun';
+    if (toggleText) toggleText.textContent = 'LIGHT';
+  }
+
+  // ========== API HELPER ==========
+  async function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('token');
+    options.headers = {
+      ...options.headers,
+      'Authorization': token ? `Bearer ${token}` : '',
+      'Content-Type': 'application/json'
+    };
+    
+    try {
+      const response = await fetch(API_URL + url, options);
+      return response;
+    } catch (error) {
+      console.error('Fetch error:', error);
+      throw error;
+    }
+  }
+
+  // ========== NOTIFICATION SYSTEM - CLICKABLE ==========
+  function showNotification(title, message, capsuleId, icon = '🎁') {
     const container = document.getElementById('notificationContainer');
+    if (!container) return;
+    
+    // Remove old notifications if too many
+    if (container.children.length > 3) {
+      container.removeChild(container.firstChild);
+    }
+    
     const notification = document.createElement('div');
     notification.className = 'notification';
+    notification.setAttribute('data-capsule-id', capsuleId);
+    notification.setAttribute('onclick', `handleNotificationClick(this, ${capsuleId})`);
+    
+    let iconClass = 'fa-gift';
+    if (icon === '🔒') iconClass = 'fa-lock';
+    else if (icon === '⏰') iconClass = 'fa-clock';
+    
     notification.innerHTML = `
-      <i class="fas ${icon === '🎁' ? 'fa-gift' : icon === '🔒' ? 'fa-lock' : 'fa-clock'}"></i>
+      <i class="fas ${iconClass}"></i>
       <div class="notification-content">
         <div class="notification-title">${title}</div>
         <div class="notification-message">${message}</div>
       </div>
     `;
+    
+    // Make it clickable
+    notification.addEventListener('click', function() {
+      if (capsuleId) {
+        viewCapsule(capsuleId);
+        this.remove();
+      }
+    });
+    
     container.appendChild(notification);
-    setTimeout(() => notification.remove(), 5000);
+    
+    // Auto remove after 8 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.remove();
+      }
+    }, 8000);
   }
+
+  // Fallback for onclick attribute
+  window.handleNotificationClick = function(element, capsuleId) {
+    viewCapsule(capsuleId);
+    element.remove();
+  };
 
   // ========== PASSWORD PEEK TOGGLE ==========
   function togglePasswordVisibility(inputId, icon) {
     const input = document.getElementById(inputId);
+    if (!input) return;
+    
     if (input.type === 'password') {
       input.type = 'text';
       icon.classList.remove('fa-eye');
@@ -1648,109 +1471,183 @@ body.dark-mode .notification i {
   const mainApp = document.getElementById('mainApp');
 
   function openModal(type) {
+    if (!modal) return;
     modal.classList.add('show');
-    loginForm.classList.toggle('hidden', type !== 'login');
-    registerForm.classList.toggle('hidden', type === 'login');
-  }
-
-  function closeModal() { modal.classList.remove('show'); }
-  function showAboutModal() { aboutModal.classList.add('show'); }
-  function closeAboutModal() { aboutModal.classList.remove('show'); }
-  function switchToRegister() { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); }
-  function switchToLogin() { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); }
-
-  // ========== AUTH FUNCTIONS ==========
-  function handleLogin() {
-    const email = document.getElementById('loginEmail').value;
-    const pass = document.getElementById('loginPassword').value;
-    const username = email.split('@')[0];
-    
-    if (email && pass) {
-      currentUser = { email, username };
-      document.getElementById('usernameDisplay').textContent = username;
-      closeModal();
-      homepage.classList.add('hidden');
-      mainApp.classList.remove('hidden');
-      capsules = [];
-      renderCapsuleGrid();
-      startTimerCheck();
+    if (type === 'login') {
+      if (loginForm) loginForm.classList.remove('hidden');
+      if (registerForm) registerForm.classList.add('hidden');
     } else {
-      alert('please enter email and password ✧');
+      if (loginForm) loginForm.classList.add('hidden');
+      if (registerForm) registerForm.classList.remove('hidden');
     }
   }
 
-  function handleRegister() {
-    const username = document.getElementById('regUsername').value;
-    const email = document.getElementById('regEmail').value;
-    const pass = document.getElementById('regPassword').value;
-    const confirm = document.getElementById('regConfirm').value;
+  function closeModal() { 
+    if (modal) modal.classList.remove('show'); 
+  }
+  
+  function showAboutModal() { 
+    if (aboutModal) aboutModal.classList.add('show'); 
+  }
+  
+  function closeAboutModal() { 
+    if (aboutModal) aboutModal.classList.remove('show'); 
+  }
+  
+  function switchToRegister() { 
+    if (loginForm) loginForm.classList.add('hidden'); 
+    if (registerForm) registerForm.classList.remove('hidden'); 
+  }
+  
+  function switchToLogin() { 
+    if (registerForm) registerForm.classList.add('hidden'); 
+    if (loginForm) loginForm.classList.remove('hidden'); 
+  }
+
+  // ========== AUTH FUNCTIONS ==========
+  async function handleLogin() {
+    const email = document.getElementById('loginEmail')?.value;
+    const password = document.getElementById('loginPassword')?.value;
     
-    if (!username || !email || !pass || !confirm) {
+    if (!email || !password) {
+      alert('please enter email and password ✧');
+      return;
+    }
+    
+    try {
+      const response = await fetch(API_URL + '/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Login failed');
+      }
+      
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      authToken = data.token;
+      currentUser = data.user;
+      
+      const usernameDisplay = document.getElementById('usernameDisplay');
+      if (usernameDisplay) {
+        usernameDisplay.textContent = data.user.username || data.user.email.split('@')[0];
+      }
+      
+      closeModal();
+      if (homepage) homepage.classList.add('hidden');
+      if (mainApp) mainApp.classList.remove('hidden');
+      
+      await loadCapsules();
+      startPeriodicChecks();
+      
+    } catch (error) {
+      alert('🔐 ' + error.message);
+    }
+  }
+
+  async function handleRegister() {
+    const username = document.getElementById('regUsername')?.value;
+    const email = document.getElementById('regEmail')?.value;
+    const password = document.getElementById('regPassword')?.value;
+    const confirm = document.getElementById('regConfirm')?.value;
+    
+    if (!username || !email || !password || !confirm) {
       alert('please fill all fields ✧');
       return;
     }
-    if (pass !== confirm) {
+    
+    if (password !== confirm) {
       alert('passwords don\'t match ✧');
       return;
     }
     
-    currentUser = { email, username };
-    document.getElementById('usernameDisplay').textContent = username;
-    closeModal();
-    homepage.classList.add('hidden');
-    mainApp.classList.remove('hidden');
-    capsules = [];
-    renderCapsuleGrid();
-    startTimerCheck();
-    alert('✨ welcome to cloud capsule!');
+    try {
+      const response = await fetch(API_URL + '/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, email, password })
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Registration failed');
+      }
+      
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      authToken = data.token;
+      currentUser = data.user;
+      
+      const usernameDisplay = document.getElementById('usernameDisplay');
+      if (usernameDisplay) {
+        usernameDisplay.textContent = data.user.username;
+      }
+      
+      closeModal();
+      if (homepage) homepage.classList.add('hidden');
+      if (mainApp) mainApp.classList.remove('hidden');
+      
+      capsules = [];
+      renderCapsuleGrid();
+      startPeriodicChecks();
+      
+      alert('✨ welcome to cloud capsule!');
+      
+    } catch (error) {
+      alert('📮 ' + error.message);
+    }
   }
 
   function signOut() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    authToken = null;
     currentUser = null;
-    mainApp.classList.add('hidden');
-    homepage.classList.remove('hidden');
+    capsules = [];
+    
+    if (mainApp) mainApp.classList.add('hidden');
+    if (homepage) homepage.classList.remove('hidden');
+    
     if (checkInterval) {
       clearInterval(checkInterval);
       checkInterval = null;
     }
-  }
-
-  // ========== TIMER CHECK FUNCTION ==========
-  function checkCapsuleTimers() {
-    const now = new Date();
-    let changed = false;
-    
-    capsules.forEach(capsule => {
-      const openDate = new Date(capsule.openDate);
-      const isOpen = now >= openDate;
-      
-      if (isOpen && !capsule.isOpen) {
-        capsule.isOpen = true;
-        changed = true;
-        showNotification(
-          '✨ Capsule Opened!', 
-          `"${capsule.title}" is ready to view`,
-          '🎁'
-        );
-      }
-    });
-    
-    if (changed) {
-      renderCapsuleGrid();
+    if (notificationCheckInterval) {
+      clearInterval(notificationCheckInterval);
+      notificationCheckInterval = null;
     }
   }
 
-  function startTimerCheck() {
-    if (checkInterval) clearInterval(checkInterval);
-    checkInterval = setInterval(checkCapsuleTimers, 1000);
+  // ========== CAPSULE FUNCTIONS ==========
+  async function loadCapsules() {
+    try {
+      const response = await fetchWithAuth('/api/capsules');
+      
+      if (!response.ok) {
+        throw new Error('Failed to load capsules');
+      }
+      
+      capsules = await response.json();
+      renderCapsuleGrid();
+      
+    } catch (error) {
+      console.error('Error loading capsules:', error);
+      showNotification('Error', 'Could not load capsules', null, '⚠️');
+    }
   }
 
-  // ========== CAPSULE FUNCTIONS ==========
   function renderCapsuleGrid() {
     const grid = document.getElementById('capsuleGrid');
+    if (!grid) return;
+    
     grid.innerHTML = '';
     
-    if (capsules.length === 0) {
+    if (!capsules || capsules.length === 0) {
       const emptyDiv = document.createElement('div');
       emptyDiv.className = 'empty-capsules';
       emptyDiv.style.gridColumn = '1 / -1';
@@ -1765,8 +1662,8 @@ body.dark-mode .notification i {
     }
     
     capsules.forEach(capsule => {
+      const openDate = new Date(capsule.open_date);
       const now = new Date();
-      const openDate = new Date(capsule.openDate);
       const isOpen = now >= openDate;
       
       const card = document.createElement('div');
@@ -1775,6 +1672,8 @@ body.dark-mode .notification i {
       
       if (isOpen) {
         card.onclick = () => viewCapsule(capsule.id);
+      } else {
+        card.onclick = () => alert('⏳ this capsule is still sealed. it will open on ' + openDate.toLocaleDateString());
       }
       
       card.innerHTML = `
@@ -1788,255 +1687,7 @@ body.dark-mode .notification i {
     });
   }
 
-  function viewCapsule(id) {
-    const capsule = capsules.find(c => c.id === id);
-    if (!capsule) return;
-    
-    const now = new Date();
-    const openDate = new Date(capsule.openDate);
-    const isOpen = now >= openDate;
-    
-    if (!isOpen) {
-      alert('⏳ this capsule is still sealed. wait until ' + openDate.toLocaleDateString());
-      return;
-    }
-    
-    const detailView = document.getElementById('capsuleDetailView');
-    const gridView = document.getElementById('capsuleGridView');
-    const detailContent = document.getElementById('capsuleDetailContent');
-    
-    detailContent.innerHTML = `
-      <div class="capsule-detail">
-        <h2 style="font-family: 'Baloo 2'; font-size: 2rem;">${capsule.title}</h2>
-        <p><i class="fas fa-calendar"></i> opened on ${now.toLocaleDateString()}</p>
-        <div class="secret-content"><h3><i class="fas fa-envelope"></i> letter</h3><p>${capsule.letter || 'no letter written'}</p></div>
-        <div class="secret-content"><h3><i class="fas fa-mask"></i> secret</h3><p>${capsule.secret || 'no secret shared'}</p></div>
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
-          <div><i class="fas fa-heart"></i> ${capsule.feeling}</div>
-          <div><i class="fas fa-star"></i> ${'⭐'.repeat(capsule.rating)}</div>
-          <div><i class="fas fa-music"></i> ${capsule.song || 'no song'}</div>
-        </div>
-      </div>
-    `;
-    
-    gridView.classList.add('hidden');
-    detailView.classList.remove('hidden');
-  }
-
-  function backToGrid() {
-    document.getElementById('capsuleDetailView').classList.add('hidden');
-    document.getElementById('capsuleGridView').classList.remove('hidden');
-  }
-
-  // ========== CREATE CAPSULE FUNCTIONS ==========
-  const capsuleGridView = document.getElementById('capsuleGridView');
-  const createCapsuleView = document.getElementById('createCapsuleView');
-  const capsuleDetailView = document.getElementById('capsuleDetailView');
-
-  function showCreateCapsule() {
-    capsuleGridView.classList.add('hidden');
-    capsuleDetailView.classList.add('hidden');
-    createCapsuleView.classList.remove('hidden');
-    
-    document.getElementById('capsuleName').value = '';
-    document.getElementById('capsuleOpenDate').value = '';
-    document.getElementById('capsuleLetter').value = '';
-    document.getElementById('capsuleSecret').value = '';
-    document.getElementById('capsuleFeeling').value = 'happy';
-    document.getElementById('capsuleSong').value = '';
-    document.getElementById('photoUpload').value = '';
-    currentRating = 0;
-    updateRatingStars();
-  }
-
-  function setRating(rating) {
-    currentRating = rating;
-    updateRatingStars();
-  }
-
-  function updateRatingStars() {
-    const stars = document.querySelectorAll('#ratingStars i');
-    stars.forEach((star, index) => {
-      if (index < currentRating) star.classList.add('active');
-      else star.classList.remove('active');
-    });
-  }
-
-  function saveCapsule() {
-    const title = document.getElementById('capsuleName').value;
-    const openDate = document.getElementById('capsuleOpenDate').value;
-    const letter = document.getElementById('capsuleLetter').value;
-    const secret = document.getElementById('capsuleSecret').value;
-    const feeling = document.getElementById('capsuleFeeling').value;
-    const song = document.getElementById('capsuleSong').value;
-    
-    if (!title || !openDate) {
-      alert('please enter a title and open date ✧');
-      return;
-    }
-    
-    const newCapsule = {
-      id: Date.now(),
-      title,
-      openDate,
-      createdAt: new Date().toISOString(),
-      isOpen: false,
-      letter,
-      secret,
-      feeling,
-      rating: currentRating,
-      song
-    };
-    
-    capsules.push(newCapsule);
-    renderCapsuleGrid();
-    
-    createCapsuleView.classList.add('hidden');
-    capsuleGridView.classList.remove('hidden');
-    
-    const openDateObj = new Date(openDate);
-    showNotification(
-      '📦 Capsule Sealed', 
-      `"${title}" will open on ${openDateObj.toLocaleDateString()}`,
-      '🔒'
-    );
-  }
-
-  function lockCapsule() {
-    saveCapsule();
-  }
-
-  // ========== PHOTO UPLOAD ==========
-  document.addEventListener('DOMContentLoaded', () => {
-    const photoInput = document.getElementById('photoUpload');
-    if (photoInput) {
-      photoInput.addEventListener('change', function(e) {
-        if (e.target.files[0]) alert('📸 photo ready for upload!');
-      });
-    }
-  });
-
-  // ========== CLOSE MODALS ON OUTSIDE CLICK ==========
-  modal.addEventListener('click', (e) => e.target === modal && closeModal());
-  aboutModal.addEventListener('click', (e) => e.target === aboutModal && closeAboutModal());
-// ========== WORKING RATING STARS ==========
-let currentRating = 0;
-
-function setRating(rating) {
-  currentRating = rating;
-  updateRatingStars();
-  
-  // Store rating in a hidden input or state
-  console.log('Rating set to:', rating);
-}
-
-function updateRatingStars() {
-  const stars = document.querySelectorAll('#ratingStars i');
-  stars.forEach((star, index) => {
-    if (index < currentRating) {
-      star.classList.add('active');
-    } else {
-      star.classList.remove('active');
-    }
-  });
-}
-
-// Initialize rating stars
-document.addEventListener('DOMContentLoaded', () => {
-  // Reset rating when form is shown
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.target.id === 'createCapsuleView' && 
-          !mutation.target.classList.contains('hidden')) {
-        currentRating = 0;
-        updateRatingStars();
-      }
-    });
-  });
-  
-  const createView = document.getElementById('createCapsuleView');
-  if (createView) {
-    observer.observe(createView, { attributes: true, attributeFilter: ['class'] });
-  }
-});
-
-// ========== CLICKABLE NOTIFICATIONS ==========
-function showNotification(title, message, capsuleId, icon = '🎁') {
-  const container = document.getElementById('notificationContainer');
-  if (!container) return;
-  
-  const notification = document.createElement('div');
-  notification.className = 'notification';
-  notification.setAttribute('data-capsule-id', capsuleId);
-  notification.style.cursor = 'pointer';
-  notification.onclick = () => {
-    if (capsuleId) {
-      viewCapsule(capsuleId);
-      notification.remove();
-    }
-  };
-  
-  notification.innerHTML = `
-    <i class="fas ${icon === '🎁' ? 'fa-gift' : icon === '🔒' ? 'fa-lock' : 'fa-clock'}"></i>
-    <div class="notification-content">
-      <div class="notification-title">${title}</div>
-      <div class="notification-message">${message}</div>
-    </div>
-  `;
-  
-  container.appendChild(notification);
-  
-  // Auto remove after 8 seconds
-  setTimeout(() => {
-    if (notification.parentNode) {
-      notification.remove();
-    }
-  }, 8000);
-}
-
-// ========== CHECK FOR NEWLY OPENED CAPSULES ==========
-async function checkForOpenedCapsules() {
-  if (!localStorage.getItem('token')) return;
-  
-  try {
-    const response = await fetchWithAuth('/api/capsules/check-opened');
-    if (!response.ok) return;
-    
-    const openedCapsules = await response.json();
-    
-    openedCapsules.forEach(capsule => {
-      showNotification(
-        '✨ Capsule Opened!', 
-        `"${capsule.title}" is ready to view - click to open`,
-        capsule.id,
-        '🎁'
-      );
-    });
-    
-    // Refresh capsule list if any opened
-    if (openedCapsules.length > 0) {
-      await loadCapsules();
-    }
-  } catch (error) {
-    console.error('Error checking opened capsules:', error);
-  }
-}
-
-// Start periodic checking
-function startOpenedCapsuleCheck() {
-  // Check immediately
-  checkForOpenedCapsules();
-  
-  // Then check every 30 seconds
-  setInterval(checkForOpenedCapsules, 30000);
-}
-
-// Call this after login
-// Add this line at the end of handleLogin and handleRegister:
-// startOpenedCapsuleCheck();
-
-// ========== ENHANCED VIEW CAPSULE ==========
-async function viewCapsule(id) {
+  async function viewCapsule(id) {
   try {
     const response = await fetchWithAuth('/api/capsules/' + id);
     
@@ -2045,48 +1696,66 @@ async function viewCapsule(id) {
     }
     
     const capsule = await response.json();
+    console.log('Opened capsule:', capsule);
     
     const detailView = document.getElementById('capsuleDetailView');
     const gridView = document.getElementById('capsuleGridView');
     const detailContent = document.getElementById('capsuleDetailContent');
     
+    if (!detailView || !gridView || !detailContent) return;
+    
+    // Format the content with proper fallbacks
+    const letter = capsule.letter || '📝 no letter written';
+    const secret = capsule.secret || '🤫 no secret shared';
+    const feeling = capsule.feeling || '💭 not specified';
+    const rating = capsule.rating || 0;
+    const song = capsule.song || '🎵 no song added';
+    
+    // Create star display
+    const stars = '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
+    
+    // Format date
     const openDate = new Date(capsule.open_date);
-    const now = new Date();
-    const isOpen = now >= openDate;
-    
-    if (!isOpen) {
-      alert('⏳ this capsule is still sealed. wait until ' + openDate.toLocaleDateString());
-      return;
-    }
-    
-    // Format rating stars
-    const ratingStars = '⭐'.repeat(capsule.rating || 0);
+    const formattedDate = openDate.toLocaleDateString();
     
     detailContent.innerHTML = `
       <div class="capsule-detail">
-        <h2 style="font-family: 'Baloo 2'; font-size: 2rem;">${capsule.title}</h2>
-        <p><i class="fas fa-calendar"></i> opened on ${now.toLocaleDateString()}</p>
+        <h2 style="font-family: 'Baloo 2'; font-size: 2rem; margin-bottom: 0.5rem;">${capsule.title}</h2>
+        <p style="margin-bottom: 1.5rem;"><i class="fas fa-calendar"></i> opened on ${formattedDate}</p>
         
         ${capsule.photo_url ? `
-          <div style="text-align: center; margin: 1rem 0;">
-            <img src="${API_URL + capsule.photo_url}" style="max-width: 100%; max-height: 300px; border-radius: 20px; border: 4px solid white;">
+          <div style="text-align: center; margin: 1rem 0 2rem;">
+            <img src="${API_URL + capsule.photo_url}" alt="Capsule memory" style="max-width: 100%; max-height: 300px; border-radius: 20px; border: 4px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
           </div>
         ` : ''}
         
-        <div class="secret-content">
-          <h3><i class="fas fa-envelope"></i> letter</h3>
-          <p>${capsule.letter || 'no letter written'}</p>
+        <div class="secret-content" style="margin-bottom: 1.5rem;">
+          <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
+            <i class="fas fa-envelope" style="color: #b07a9a;"></i> letter
+          </h3>
+          <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${letter}</p>
         </div>
         
-        <div class="secret-content">
-          <h3><i class="fas fa-mask"></i> secret</h3>
-          <p>${capsule.secret || 'no secret shared'}</p>
+        <div class="secret-content" style="margin-bottom: 1.5rem;">
+          <h3 style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.8rem;">
+            <i class="fas fa-mask" style="color: #b07a9a;"></i> secret
+          </h3>
+          <p style="background: rgba(255,255,255,0.3); padding: 1rem; border-radius: 15px;">${secret}</p>
         </div>
         
-        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1rem 0;">
-          <div><i class="fas fa-heart"></i> ${capsule.feeling || 'not specified'}</div>
-          <div><i class="fas fa-star"></i> ${ratingStars}</div>
-          <div><i class="fas fa-music"></i> ${capsule.song || 'no song'}</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.5rem 0; padding: 1rem; background: rgba(255,235,245,0.3); border-radius: 20px;">
+          <div style="text-align: center;">
+            <i class="fas fa-heart" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+            <div>${feeling}</div>
+          </div>
+          <div style="text-align: center;">
+            <i class="fas fa-star" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+            <div>${stars}</div>
+          </div>
+          <div style="text-align: center;">
+            <i class="fas fa-music" style="color: #b07a9a; font-size: 1.2rem; margin-bottom: 0.3rem;"></i>
+            <div>${song}</div>
+          </div>
         </div>
       </div>
     `;
@@ -2099,66 +1768,237 @@ async function viewCapsule(id) {
   }
 }
 
-// ========== UPDATE SAVE CAPSULE TO INCLUDE RATING ==========
-async function saveCapsule() {
-  const title = document.getElementById('capsuleName').value;
-  const openDate = document.getElementById('capsuleOpenDate').value;
-  const letter = document.getElementById('capsuleLetter').value;
-  const secret = document.getElementById('capsuleSecret').value;
-  const feeling = document.getElementById('capsuleFeeling').value;
-  const song = document.getElementById('capsuleSong').value;
-  const photoFile = document.getElementById('photoUpload').files[0];
-  
-  if (!title || !openDate) {
-    alert('please enter a title and open date ✧');
-    return;
+  function backToGrid() {
+    const detailView = document.getElementById('capsuleDetailView');
+    const gridView = document.getElementById('capsuleGridView');
+    if (detailView) detailView.classList.add('hidden');
+    if (gridView) gridView.classList.remove('hidden');
   }
-  
-  const formData = new FormData();
-  formData.append('title', title);
-  formData.append('open_date', openDate);
-  formData.append('letter', letter);
-  formData.append('secret', secret);
-  formData.append('feeling', feeling);
-  formData.append('rating', currentRating);  // Use currentRating
-  formData.append('song', song);
-  
-  if (photoFile) {
-    formData.append('photo', photoFile);
+
+  // ========== CREATE CAPSULE FUNCTIONS ==========
+  const capsuleGridView = document.getElementById('capsuleGridView');
+  const createCapsuleView = document.getElementById('createCapsuleView');
+  const capsuleDetailView = document.getElementById('capsuleDetailView');
+
+  function showCreateCapsule() {
+    if (capsuleGridView) capsuleGridView.classList.add('hidden');
+    if (capsuleDetailView) capsuleDetailView.classList.add('hidden');
+    if (createCapsuleView) createCapsuleView.classList.remove('hidden');
+    
+    // Reset form
+    const nameInput = document.getElementById('capsuleName');
+    const dateInput = document.getElementById('capsuleOpenDate');
+    const letterInput = document.getElementById('capsuleLetter');
+    const secretInput = document.getElementById('capsuleSecret');
+    const feelingSelect = document.getElementById('capsuleFeeling');
+    const songInput = document.getElementById('capsuleSong');
+    const photoInput = document.getElementById('photoUpload');
+    
+    if (nameInput) nameInput.value = '';
+    if (dateInput) dateInput.value = '';
+    if (letterInput) letterInput.value = '';
+    if (secretInput) secretInput.value = '';
+    if (feelingSelect) feelingSelect.value = 'happy';
+    if (songInput) songInput.value = '';
+    if (photoInput) photoInput.value = '';
+    
+    currentRating = 0;
+    updateRatingStars();
   }
-  
-  try {
-    const response = await fetch(API_URL + '/api/capsules', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: formData
+
+  // ========== WORKING RATING STARS ==========
+  function setRating(rating) {
+    currentRating = rating;
+    updateRatingStars();
+  }
+
+  function updateRatingStars() {
+    const stars = document.querySelectorAll('#ratingStars i');
+    stars.forEach((star, index) => {
+      if (index < currentRating) {
+        star.classList.add('active');
+      } else {
+        star.classList.remove('active');
+      }
     });
+  }
+
+  async function saveCapsule() {
+    const title = document.getElementById('capsuleName')?.value;
+    const openDate = document.getElementById('capsuleOpenDate')?.value;
+    const letter = document.getElementById('capsuleLetter')?.value;
+    const secret = document.getElementById('capsuleSecret')?.value;
+    const feeling = document.getElementById('capsuleFeeling')?.value;
+    const song = document.getElementById('capsuleSong')?.value;
+    const photoFile = document.getElementById('photoUpload')?.files[0];
     
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.error || 'Failed to save capsule');
+    if (!title || !openDate) {
+      alert('please enter a title and open date ✧');
+      return;
     }
     
-    await loadCapsules();
+    const formData = new FormData();
+    formData.append('title', title);
+    formData.append('open_date', openDate);
+    formData.append('letter', letter || '');
+    formData.append('secret', secret || '');
+    formData.append('feeling', feeling || 'happy');
+    formData.append('rating', currentRating);
+    formData.append('song', song || '');
     
-    createCapsuleView.classList.add('hidden');
-    capsuleGridView.classList.remove('hidden');
+    if (photoFile) {
+      formData.append('photo', photoFile);
+    }
     
-    const openDateObj = new Date(openDate);
-    showNotification(
-      '📦 Capsule Sealed', 
-      `"${title}" will open on ${openDateObj.toLocaleDateString()}`,
-      data.id,
-      '🔒'
-    );
-    
-  } catch (error) {
-    alert('Error: ' + error.message);
+    try {
+      const response = await fetch(API_URL + '/api/capsules', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: formData
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save capsule');
+      }
+      
+      await loadCapsules();
+      
+      if (createCapsuleView) createCapsuleView.classList.add('hidden');
+      if (capsuleGridView) capsuleGridView.classList.remove('hidden');
+      
+      const openDateObj = new Date(openDate);
+      showNotification(
+        '📦 Capsule Sealed', 
+        `"${title}" will open on ${openDateObj.toLocaleDateString()}`,
+        data.id,
+        '🔒'
+      );
+      
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
   }
-}
+
+  function lockCapsule() {
+    saveCapsule();
+  }
+
+  // ========== CHECK FOR OPENED CAPSULES ==========
+  async function checkForOpenedCapsules() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+      const response = await fetch(API_URL + '/api/capsules/check-opened', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) return;
+      
+      const openedCapsules = await response.json();
+      
+      openedCapsules.forEach(capsule => {
+        showNotification(
+          '✨ Capsule Opened!', 
+          `"${capsule.title}" is ready to view - click to open`,
+          capsule.id,
+          '🎁'
+        );
+      });
+      
+      if (openedCapsules.length > 0) {
+        await loadCapsules();
+      }
+    } catch (error) {
+      console.error('Error checking opened capsules:', error);
+    }
+  }
+
+  function startPeriodicChecks() {
+    // Check for opened capsules immediately
+    checkForOpenedCapsules();
+    
+    // Then check every 30 seconds
+    if (notificationCheckInterval) clearInterval(notificationCheckInterval);
+    notificationCheckInterval = setInterval(checkForOpenedCapsules, 30000);
+  }
+
+  // ========== AUTO LOGIN CHECK ==========
+  async function checkAutoLogin() {
+    const token = localStorage.getItem('token');
+    if (!token) return;
+    
+    try {
+      const response = await fetchWithAuth('/api/auth/me');
+      
+      if (response.ok) {
+        const data = await response.json();
+        currentUser = data.user;
+        authToken = token;
+        
+        const usernameDisplay = document.getElementById('usernameDisplay');
+        if (usernameDisplay) {
+          usernameDisplay.textContent = data.user.username || data.user.email.split('@')[0];
+        }
+        
+        if (homepage) homepage.classList.add('hidden');
+        if (mainApp) mainApp.classList.remove('hidden');
+        
+        await loadCapsules();
+        startPeriodicChecks();
+      } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      }
+    } catch (error) {
+      console.log('Auto login failed');
+    }
+  }
+
+  // ========== INITIALIZATION ==========
+  document.addEventListener('DOMContentLoaded', () => {
+    checkAutoLogin();
+    
+    // Photo upload preview
+    const photoInput = document.getElementById('photoUpload');
+    if (photoInput) {
+      photoInput.addEventListener('change', function(e) {
+        if (e.target.files[0]) {
+          alert('📸 photo ready for upload!');
+        }
+      });
+    }
+    
+    // Initialize rating stars observer
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.target.id === 'createCapsuleView' && 
+            !mutation.target.classList.contains('hidden')) {
+          currentRating = 0;
+          updateRatingStars();
+        }
+      });
+    });
+    
+    const createView = document.getElementById('createCapsuleView');
+    if (createView) {
+      observer.observe(createView, { attributes: true, attributeFilter: ['class'] });
+    }
+  });
+
+  // ========== CLOSE MODALS ON OUTSIDE CLICK ==========
+  if (modal) {
+    modal.addEventListener('click', (e) => e.target === modal && closeModal());
+  }
+  if (aboutModal) {
+    aboutModal.addEventListener('click', (e) => e.target === aboutModal && closeAboutModal());
+  }
 </script>
 </body>
 </html>

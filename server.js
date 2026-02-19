@@ -52,6 +52,7 @@ const upload = multer({
 const db = new sqlite3.Database('./capsule.db');
 
 db.serialize(() => {
+  // Users table
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT UNIQUE NOT NULL,
@@ -60,6 +61,7 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Capsules table
   db.run(`CREATE TABLE IF NOT EXISTS capsules (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
@@ -69,6 +71,7 @@ db.serialize(() => {
     FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
   )`);
 
+  // Contents table
   db.run(`CREATE TABLE IF NOT EXISTS contents (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     capsule_id INTEGER UNIQUE NOT NULL,
@@ -81,7 +84,7 @@ db.serialize(() => {
     FOREIGN KEY(capsule_id) REFERENCES capsules(id) ON DELETE CASCADE
   )`);
 
-  console.log('✅ Database tables ready');
+  console.log('✅ Database setup complete');
 });
 
 // ==================== AUTH MIDDLEWARE ====================
@@ -253,7 +256,7 @@ app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) 
         db.run(
           `INSERT INTO contents (capsule_id, letter, secret, feeling, rating, song, photo_url)
            VALUES (?, ?, ?, ?, ?, ?, ?)`,
-          [capsuleId, letter || '', secret || '', feeling || '', parseInt(rating) || 0, song || '', photo_url],
+          [capsuleId, letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photo_url],
           function(err) {
             if (err) {
               db.run('ROLLBACK');
@@ -272,7 +275,7 @@ app.post('/api/capsules', authenticateToken, upload.single('photo'), (req, res) 
   });
 });
 
-// Get single capsule
+// Get single capsule - FIXED VERSION
 app.get('/api/capsules/:id', authenticateToken, (req, res) => {
   const capsuleId = req.params.id;
 
@@ -285,6 +288,7 @@ app.get('/api/capsules/:id', authenticateToken, (req, res) => {
     [capsuleId, req.user.id],
     (err, capsule) => {
       if (err) {
+        console.error('Database error:', err);
         return res.status(500).json({ error: 'Failed to fetch capsule' });
       }
 
@@ -292,16 +296,44 @@ app.get('/api/capsules/:id', authenticateToken, (req, res) => {
         return res.status(404).json({ error: 'Capsule not found' });
       }
 
-      if (!capsule.is_open) {
-        capsule.letter = null;
-        capsule.secret = null;
-        capsule.feeling = null;
-        capsule.rating = null;
-        capsule.song = null;
-        capsule.photo_url = null;
+      // Check if capsule is open
+      const now = new Date();
+      const openDate = new Date(capsule.open_date);
+      const isOpen = now >= openDate;
+
+      if (!isOpen) {
+        // Return locked capsule
+        return res.json({
+          id: capsule.id,
+          user_id: capsule.user_id,
+          title: capsule.title,
+          open_date: capsule.open_date,
+          created_at: capsule.created_at,
+          is_open: 0,
+          letter: null,
+          secret: null,
+          feeling: null,
+          rating: null,
+          song: null,
+          photo_url: null
+        });
       }
 
-      res.json(capsule);
+      // Return OPEN capsule with ALL content
+      res.json({
+        id: capsule.id,
+        user_id: capsule.user_id,
+        title: capsule.title,
+        open_date: capsule.open_date,
+        created_at: capsule.created_at,
+        is_open: 1,
+        letter: capsule.letter || '',
+        secret: capsule.secret || '',
+        feeling: capsule.feeling || 'happy',
+        rating: capsule.rating || 0,
+        song: capsule.song || '',
+        photo_url: capsule.photo_url || null
+      });
     }
   );
 });
@@ -339,26 +371,21 @@ app.put('/api/capsules/:id', authenticateToken, upload.single('photo'), (req, re
               return res.status(500).json({ error: 'Failed to update capsule' });
             }
 
-            let query = 'UPDATE contents SET letter = ?, secret = ?, feeling = ?, rating = ?, song = ?';
-            const params = [letter || '', secret || '', feeling || '', parseInt(rating) || 0, song || ''];
+            db.run(
+              `UPDATE contents SET letter = ?, secret = ?, feeling = ?, rating = ?, song = ?${photo_url ? ', photo_url = ?' : ''} WHERE capsule_id = ?`,
+              photo_url 
+                ? [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', photo_url, capsuleId]
+                : [letter || '', secret || '', feeling || 'happy', parseInt(rating) || 0, song || '', capsuleId],
+              function(err) {
+                if (err) {
+                  db.run('ROLLBACK');
+                  return res.status(500).json({ error: 'Failed to update contents' });
+                }
 
-            if (photo_url) {
-              query += ', photo_url = ?';
-              params.push(photo_url);
-            }
-
-            query += ' WHERE capsule_id = ?';
-            params.push(capsuleId);
-
-            db.run(query, params, function(err) {
-              if (err) {
-                db.run('ROLLBACK');
-                return res.status(500).json({ error: 'Failed to update contents' });
+                db.run('COMMIT');
+                res.json({ message: 'Capsule updated successfully' });
               }
-
-              db.run('COMMIT');
-              res.json({ message: 'Capsule updated successfully' });
-            });
+            );
           }
         );
       });
@@ -387,50 +414,21 @@ app.delete('/api/capsules/:id', authenticateToken, (req, res) => {
   );
 });
 
-// Check for opened capsules endpoint
+// Check for opened capsules
 app.get('/api/capsules/check-opened', authenticateToken, (req, res) => {
   db.all(
     `SELECT id, title FROM capsules 
      WHERE user_id = ? 
-     AND datetime(open_date) <= datetime('now') 
-     AND id NOT IN (
-       SELECT capsule_id FROM notifications WHERE user_id = ? AND notified = 1
-     )`,
-    [req.user.id, req.user.id],
+     AND datetime(open_date) <= datetime('now')`,
+    [req.user.id],
     (err, capsules) => {
       if (err) {
         return res.status(500).json({ error: 'Database error' });
       }
-
-      // Mark these as notified
-      if (capsules.length > 0) {
-        const placeholders = capsules.map(() => '(?, ?)').join(',');
-        const values = capsules.flatMap(c => [req.user.id, c.id]);
-        
-        db.run(
-          `INSERT OR IGNORE INTO notifications (user_id, capsule_id, notified) 
-           VALUES ${placeholders}`,
-          values,
-          (err) => {
-            if (err) console.error('Error marking notifications:', err);
-          }
-        );
-      }
-
       res.json(capsules);
     }
   );
 });
-
-// Create notifications table
-db.run(`CREATE TABLE IF NOT EXISTS notifications (
-  id INTEGER PRIMARY KEY AUTOINCREMENT,
-  user_id INTEGER NOT NULL,
-  capsule_id INTEGER NOT NULL,
-  notified BOOLEAN DEFAULT 1,
-  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  UNIQUE(user_id, capsule_id)
-)`);
 
 // ==================== SERVE FRONTEND ====================
 app.use(express.static(__dirname));
@@ -447,7 +445,7 @@ app.use((err, req, res, next) => {
     }
     return res.status(400).json({ error: err.message });
   }
-  console.error(err.stack);
+  console.error('Server error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
